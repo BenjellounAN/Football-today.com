@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Checkout - KFC</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-red: #8B0000;
+      --primary-red-light: #a52a2a;
+      --primary-red-dark: #660000;
+      --accent-gold: #D4AF37;
+      --text-dark: #2C3E50;
+      --text-light: #7F8C8D;
+      --bg-light: #F9F9F9;
+      --border-light: #ECF0F1;
+      --shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: var(--text-dark);
+    }
+    
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    
+    /* Fixed Back Button */
+    .back-btn {
+      position: fixed;
+      top: 15px;
+      left: 15px;
+      background: var(--primary-red);
+      color: white;
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+      z-index: 100;
+      transition: all 0.3s ease;
+    }
+    
+    .back-btn:hover {
+      background: var(--primary-red-dark);
+      transform: translateX(-3px);
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 25px;
+      padding-top: 10px;
+    }
+    
+    .header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-red);
+      margin-bottom: 8px;
+    }
+    
+    .header p {
+      color: var(--text-light);
+      font-size: 0.95rem;
+    }
+    
+    /* Cart Layout */
+    .cart-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .cart-items {
+      flex: 1;
+      min-width: 300px;
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    
+    .cart-summary {
+      width: 320px;
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      align-self: flex-start;
+    }
+    
+    /* Cart Items */
+    .cart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    
+    .cart-header h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+    }
+    
+    .clear-cart {
+      color: var(--primary-red);
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    /* Item Card - Compact Design */
+    .item-card {
+      display: flex;
+      gap: 12px;
+      padding: 15px 0;
+      border-bottom: 1px solid var(--border-light);
+      align-items: center;
+    }
+    
+    .item-image {
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+    
+    .item-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .item-details {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .item-name {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .item-desc {
+      color: var(--text-light);
+      font-size: 0.8rem;
+      margin-bottom: 6px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      line-height: 1.3;
+    }
+    
+    .item-price {
+      color: var(--primary-red);
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+    
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+    
+    .quantity-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s ease;
+      font-size: 0.8rem;
+    }
+    
+    .quantity-btn:hover {
+      background: var(--primary-red);
+      color: white;
+    }
+    
+    .item-quantity {
+      font-weight: 600;
+      min-width: 26px;
+      text-align: center;
+      font-size: 0.9rem;
+    }
+    
+    .remove-item {
+      color: #e74c3c;
+      background: none;
+      border: none;
+      cursor: pointer;
+      margin-left: 10px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    
+    /* Cart Summary */
+    .summary-title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+    }
+    
+    .summary-label {
+      color: var(--text-light);
+    }
+    
+    .summary-value {
+      font-weight: 500;
+    }
+    
+    .summary-total {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+      padding-top: 12px;
+      border-top: 1px dashed var(--border-light);
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    
+    .total-label {
+      color: var(--text-dark);
+    }
+    
+    .total-price {
+      color: var(--primary-red);
+    }
+    
+    /* Payment Method */
+    .payment-method {
+      margin: 20px 0;
+    }
+    
+    .payment-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    
+    .payment-option {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid var(--border-light);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.9rem;
+    }
+    
+    .payment-option.selected {
+      border-color: var(--primary-red);
+      background: rgba(139, 0, 0, 0.05);
+    }
+    
+    .payment-option input {
+      accent-color: var(--primary-red);
+      transform: scale(0.9);
+    }
+    
+    .payment-option label {
+      flex: 1;
+      cursor: pointer;
+    }
+    
+    .payment-icon {
+      color: var(--primary-red);
+      font-size: 1rem;
+    }
+    
+    /* Checkout Button */
+    .checkout-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 10px rgba(139, 0, 0, 0.25);
+      transition: all 0.3s ease;
+      margin-top: 15px;
+    }
+    
+    .checkout-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(139, 0, 0, 0.35);
+    }
+    
+    .checkout-btn:active {
+      transform: translateY(0);
+    }
+    
+    /* Empty Cart */
+    .empty-cart {
+      text-align: center;
+      padding: 30px 0;
+    }
+    
+    .empty-cart i {
+      font-size: 4rem;
+      color: var(--border-light);
+      margin-bottom: 15px;
+    }
+    
+    .empty-cart p {
+      color: var(--text-light);
+      font-size: 1rem;
+      margin-bottom: 20px;
+    }
+    
+    .browse-btn {
+      background: var(--primary-red);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 25px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 0.9rem;
+    }
+    
+    .browse-btn:hover {
+      background: var(--primary-red-dark);
+    }
+    
+    /* Info Text */
+    .info-text {
+      text-align: center;
+      margin-top: 12px;
+      color: var(--text-light);
+      font-size: 0.8rem;
+      line-height: 1.4;
+    }
+    
+    .info-text i {
+      margin-right: 4px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .cart-container {
+        flex-direction: column;
+      }
+      
+      .cart-summary {
+        width: 100%;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .header h1 {
+        font-size: 1.8rem;
+      }
+      
+      .header p {
+        font-size: 0.9rem;
+      }
+      
+      .cart-items, .cart-summary {
+        padding: 18px;
+        border-radius: 14px;
+      }
+      
+      .item-card {
+        flex-direction: row;
+        text-align: left;
+        gap: 10px;
+      }
+      
+      .item-image {
+        width: 60px;
+        height: 60px;
+      }
+      
+      .item-controls {
+        justify-content: flex-start;
+      }
+      
+      .remove-item {
+        margin-left: 0;
+        margin-top: 0;
+        width: auto;
+        justify-content: flex-start;
+      }
+      
+      .payment-option {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Fixed Back Button -->
+    <a href="index.html" class="back-btn">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    
+    <!-- Header -->
+    <div class="header">
+      <h1>Checkout</h1>
+      <p>Review your order and complete your purchase</p>
+    </div>
+    
+    <!-- Cart Layout -->
+    <div class="cart-container">
+      <!-- Cart Items -->
+      <div class="cart-items">
+        <div class="cart-header">
+          <h2 id="cart-count">Order Items (0)</h2>
+          <button class="clear-cart" id="clear-cart">
+            <i class="fas fa-trash-alt"></i> Clear
+          </button>
+        </div>
+        
+        <div id="cart-items-container">
+          <!-- سيتم إضافة العناصر ديناميكياً بواسطة JavaScript -->
+        </div>
+      </div>
+      
+      <!-- Cart Summary -->
+      <div class="cart-summary">
+        <h2 class="summary-title">Order Summary</h2>
+        
+        <div class="summary-item">
+          <span class="summary-label">Subtotal</span>
+          <span class="summary-value" id="subtotal">$0.00</span>
+        </div>
+        
+        <div class="summary-item">
+          <span class="summary-label">Delivery Fee</span>
+          <span class="summary-value" id="delivery-fee">$3.99</span>
+        </div>
+        
+        <div class="summary-item">
+          <span class="summary-label">Tax (7.5%)</span>
+          <span class="summary-value" id="tax">$0.00</span>
+        </div>
+        
+        <div class="summary-total">
+          <span class="total-label">Total</span>
+          <span class="total-price" id="total-price">$3.99</span>
+        </div>
+        
+        <!-- Payment Method -->
+        <div class="payment-method">
+          <h3 class="payment-title">Payment Method</h3>
+          
+          <div class="payment-option selected">
+            <input type="radio" id="cash" name="payment" checked>
+            <label for="cash">Cash on Delivery</label>
+            <div class="payment-icon">
+              <i class="fas fa-money-bill-wave"></i>
+            </div>
+          </div>
+        </div>
+        
+        <button class="checkout-btn" id="checkout-btn">
+          <i class="fab fa-whatsapp"></i> Complete Order via WhatsApp
+        </button>
+        
+        <p class="info-text">
+          <i class="fas fa-info-circle"></i> When you complete your order via WhatsApp, we'll notify you of the total amount including delivery charges.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Cart data structure - سيتم تحميلها من localStorage
+    let cart = [];
+
+    // Constants
+    const DELIVERY_FEE = 3.99;
+    const TAX_RATE = 0.075; // 7.5%
+
+    // DOM elements
+    const cartItemsContainer = document.getElementById('cart-items-container');
+    const cartCount = document.getElementById('cart-count');
+    const subtotalElement = document.getElementById('subtotal');
+    const deliveryFeeElement = document.getElementById('delivery-fee');
+    const taxElement = document.getElementById('tax');
+    const totalPriceElement = document.getElementById('total-price');
+    const clearCartBtn = document.getElementById('clear-cart');
+    const checkoutBtn = document.getElementById('checkout-btn');
+
+    // دالة للحصول على محتويات السلة من localStorage
+    function getCart() {
+      const cartData = localStorage.getItem('kfcCart');
+      return cartData ? JSON.parse(cartData) : [];
+    }
+    
+    // دالة لحفظ السلة في localStorage
+    function saveCart() {
+      localStorage.setItem('kfcCart', JSON.stringify(cart));
+    }
+    
+    // Initialize the cart
+    function initCart() {
+      cart = getCart();
+      renderCartItems();
+      updateCartDisplay();
+      attachEventListeners();
+    }
+    
+    // Render cart items in the UI
+    function renderCartItems() {
+      cartItemsContainer.innerHTML = '';
+      
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = `
+          <div class="empty-cart">
+            <i class="fas fa-shopping-cart"></i>
+            <p>Your cart is empty</p>
+            <a href="index.html" class="browse-btn">Browse Menu</a>
+          </div>
+        `;
+        return;
+      }
+      
+      cart.forEach(item => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'item-card';
+        itemElement.setAttribute('data-id', item.title);
+        
+        itemElement.innerHTML = `
+          <div class="item-image">
+            <img src="https://via.placeholder.com/70x70/eee/999?text=KFC" alt="${item.title}">
+          </div>
+          <div class="item-details">
+            <div class="item-name">${item.title}</div>
+            <div class="item-price">$${item.price.toFixed(2)}</div>
+            <div class="item-controls">
+              <button class="quantity-btn minus-btn"><i class="fas fa-minus"></i></button>
+              <span class="item-quantity">${item.quantity}</span>
+              <button class="quantity-btn plus-btn"><i class="fas fa-plus"></i></button>
+              <button class="remove-item"><i class="fas fa-times"></i> Remove</button>
+            </div>
+          </div>
+        `;
+        
+        cartItemsContainer.appendChild(itemElement);
+      });
+    }
+
+    // Calculate cart totals
+    function calculateTotals() {
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const tax = subtotal * TAX_RATE;
+      const total = subtotal + DELIVERY_FEE + tax;
+      
+      return {
+        subtotal: subtotal.toFixed(2),
+        deliveryFee: DELIVERY_FEE.toFixed(2),
+        tax: tax.toFixed(2),
+        total: total.toFixed(2)
+      };
+    }
+
+    // Update cart display
+    function updateCartDisplay() {
+      const totals = calculateTotals();
+      
+      // Update summary
+      subtotalElement.textContent = `$${totals.subtotal}`;
+      deliveryFeeElement.textContent = `$${totals.deliveryFee}`;
+      taxElement.textContent = `$${totals.tax}`;
+      totalPriceElement.textContent = `$${totals.total}`;
+      
+      // Update cart count
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      cartCount.textContent = `Order Items (${totalItems})`;
+    }
+
+    // Update item quantity
+    function updateQuantity(itemTitle, change) {
+      const item = cart.find(item => item.title === itemTitle);
+      if (item) {
+        item.quantity += change;
+        
+        // Remove item if quantity is 0
+        if (item.quantity <= 0) {
+          const itemIndex = cart.findIndex(i => i.title === itemTitle);
+          if (itemIndex !== -1) {
+            cart.splice(itemIndex, 1);
+          }
+        }
+        
+        saveCart();
+        renderCartItems();
+        updateCartDisplay();
+      }
+    }
+
+    // Remove item from cart
+    function removeItem(itemTitle) {
+      const itemIndex = cart.findIndex(item => item.title === itemTitle);
+      if (itemIndex !== -1) {
+        cart.splice(itemIndex, 1);
+        saveCart();
+        renderCartItems();
+        updateCartDisplay();
+      }
+    }
+
+    // Clear entire cart
+    function clearCart() {
+      if (cart.length === 0) return;
+      
+      if (confirm("Are you sure you want to clear your cart?")) {
+        cart = [];
+        saveCart();
+        renderCartItems();
+        updateCartDisplay();
+      }
+    }
+
+    // Handle checkout
+    function handleCheckout() {
+      if (cart.length === 0) {
+        alert("Your cart is empty. Please add items before checking out.");
+        return;
+      }
+      
+      const totals = calculateTotals();
+      const message = `Hello! I would like to place an order:%0A%0A${generateOrderText()}%0A%0ASubtotal: $${totals.subtotal}%0ADelivery: $${totals.deliveryFee}%0ATax: $${totals.tax}%0A%0ATotal: $${totals.total}%0A%0APlease confirm the total amount including delivery charges.`;
+      
+      // Open WhatsApp with the order message
+      window.open(`https://wa.me/?text=${message}`, '_blank');
+    }
+
+    // Generate order text for WhatsApp
+    function generateOrderText() {
+      return cart.map(item => 
+        `${item.quantity}x ${item.title} - $${(item.price * item.quantity).toFixed(2)}`
+      ).join("%0A");
+    }
+
+    // Attach event listeners
+    function attachEventListeners() {
+      // Clear cart button
+      clearCartBtn.addEventListener('click', clearCart);
+      
+      // Checkout button
+      checkoutBtn.addEventListener('click', handleCheckout);
+      
+      // Use event delegation for dynamic elements
+      cartItemsContainer.addEventListener('click', function(e) {
+        const itemCard = e.target.closest('.item-card');
+        if (!itemCard) return;
+        
+        const itemTitle = itemCard.getAttribute('data-id');
+        
+        if (e.target.closest('.plus-btn')) {
+          updateQuantity(itemTitle, 1);
+        } else if (e.target.closest('.minus-btn')) {
+          updateQuantity(itemTitle, -1);
+        } else if (e.target.closest('.remove-item')) {
+          removeItem(itemTitle);
+        }
+      });
+    }
+
+    // Initialize the cart when the page loads
+    document.addEventListener('DOMContentLoaded', initCart);
+  </script>
+</body>
+</html>
