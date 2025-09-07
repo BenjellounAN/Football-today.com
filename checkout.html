@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout - KFC</title>
+  <title>Checkout </title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -450,10 +450,10 @@
 </head>
 <body>
   <div class="container">
-    <!-- Fixed Back Button -->
-    <a href="index.html" class="back-btn">
+    <!-- Fixed Back Button - تم التعديل هنا -->
+    <div class="back-btn" id="back-button">
       <i class="fas fa-arrow-left"></i>
-    </a>
+    </div>
     
     <!-- Header -->
     <div class="header">
@@ -542,6 +542,7 @@
     const totalPriceElement = document.getElementById('total-price');
     const clearCartBtn = document.getElementById('clear-cart');
     const checkoutBtn = document.getElementById('checkout-btn');
+    const backButton = document.getElementById('back-button');
 
     // دالة للحصول على محتويات السلة من localStorage
     function getCart() {
@@ -695,6 +696,12 @@
       ).join("%0A");
     }
 
+    // Handle back button click - تمت إضافة هذه الدالة
+    function handleBackButton() {
+      // استخدام history.back() للعودة إلى الصفحة السابقة
+      window.history.back();
+    }
+
     // Attach event listeners
     function attachEventListeners() {
       // Clear cart button
@@ -702,6 +709,9 @@
       
       // Checkout button
       checkoutBtn.addEventListener('click', handleCheckout);
+      
+      // Back button - تمت إضافة المستمع لهذا الحدث
+      backButton.addEventListener('click', handleBackButton);
       
       // Use event delegation for dynamic elements
       cartItemsContainer.addEventListener('click', function(e) {
