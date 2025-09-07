@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KFC Menu</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* إضافة شريط التنقل بين المطاعم */
+    .restaurant-nav {
+      display: flex;
+      overflow-x: auto;
+      padding: 10px;
+      background: #f8f8f8;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 49px;
+      z-index: 8;
+    }
+    
+    .restaurant-btn {
+      padding: 8px 16px;
+      border-radius: 20px;
+      margin-right: 10px;
+      white-space: nowrap;
+      background: white;
+      border: 1px solid #ddd;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    
+    .restaurant-btn.active {
+      background: darkred;
+      color: white;
+      border-color: darkred;
+    }
+    
+    .restaurant-btn:hover {
+      background: #e0e0e0;
+    }
+    
+    /* باقي الأنماط تبقى كما هي */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #fff;
+      color: #222;
+      padding-bottom: 80px; /* Space for fixed basket */
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 10;
+    }
+    .header .left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header h2 {
+      font-size: 16px;
+      margin: 0;
+      font-weight: bold;
+    }
+    .header .icons {
+      display: flex;
+      gap: 15px;
+      font-size: 18px;
+    }
+    .header .icons i {
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+    .header .icons i:hover {
+      color: darkred;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      overflow-x: auto;
+      padding: 8px 12px;
+      border-bottom: 1px solid #ddd;
+      background: #fff;
+      position: sticky;
+      top: 98px;
+      z-index: 9;
+    }
+    .tab {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 14px;
+      margin-right: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      background: #f3f3f3;
+      transition: all 0.3s;
+    }
+    .tab.active {
+      background: darkred;
+      color: #fff;
+      font-weight: bold;
+    }
+    .tab:hover {
+      background: #e0e0e0;
+    }
+    .tab.active:hover {
+      background: #a00;
+    }
+
+    /* Search Bar */
+    .search-container {
+      display: none;
+      padding: 10px;
+      background: #fff;
+      border-bottom: 1px solid #ddd;
+      position: sticky;
+      top: 98px;
+      z-index: 9;
+    }
+    .search-container.active {
+      display: block;
+    }
+    .search-box {
+      display: flex;
+      align-items: center;
+      background: #f3f3f3;
+      border-radius: 20px;
+      padding: 8px 15px;
+    }
+    .search-box input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      padding: 5px;
+      font-size: 14px;
+    }
+
+    /* Menu Items */
+    .menu {
+      padding: 10px;
+    }
+    .item {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid #eee;
+      padding: 15px 0;
+      animation: fadeIn 0.5s;
+    }
+    .item-text {
+      flex: 1;
+      padding-right: 10px;
+    }
+    .item-title {
+      font-weight: bold;
+      margin: 0 0 6px;
+      font-size: 15px;
+    }
+    .item-desc {
+      font-size: 13px;
+      color: #555;
+      margin-bottom: 6px;
+    }
+    .item-calories {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+    .item-price {
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .item-img {
+      position: relative;
+    }
+    .item-img img {
+      width: 90px;
+      height: 90px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .item-img button {
+      position: absolute;
+      bottom: 5px;
+      right: 5px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      border: none;
+      background: darkred;
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: all 0.2s;
+    }
+    .item-img button:hover {
+      background: #a00;
+      transform: scale(1.05);
+    }
+
+    /* Fixed Basket Button */
+    .fixed-basket {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: none;
+    }
+    .fixed-basket.active {
+      display: block;
+      animation: bounce 0.5s;
+    }
+    .view-basket-btn {
+      background: darkred;
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 12px 25px;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s;
+    }
+    .view-basket-btn:hover {
+      background: #a00;
+      transform: translateY(-2px);
+    }
+    .item-count {
+      background: #fff;
+      color: darkred;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      position: relative;
+    }
+
+    /* Stars animation */
+    @keyframes starAnimation {
+      0% { 
+        opacity: 0; 
+        transform: translate(0, 0) scale(0.5); 
+      }
+      50% { 
+        opacity: 1; 
+        transform: translate(var(--tx), var(--ty)) scale(1.2); 
+      }
+      100% { 
+        opacity: 0; 
+        transform: translate(var(--tx), var(--ty)) scale(1); 
+      }
+    }
+
+    .star {
+      position: absolute;
+      color: white;
+      font-size: 8px;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    /* Basket Summary */
+    .basket-summary {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      width: 90%;
+      max-width: 350px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 99;
+    }
+    .basket-summary.active {
+      display: block;
+      animation: slideUp 0.3s;
+    }
+    .basket-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .basket-title {
+      font-weight: bold;
+      font-size: 16px;
+    }
+    .basket-count {
+      background: darkred;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+    .basket-items {
+      max-height: 200px;
+      overflow-y: auto;
+      margin-bottom: 10px;
+    }
+    .basket-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f5f5f5;
+      font-size: 14px;
+    }
+    .basket-total {
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #eee;
+    }
+
+    /* Checkout Button */
+    .checkout-btn {
+      width: 100%;
+      background: darkgreen;
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 10px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes bounce {
+      0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+      40% {transform: translateX(-50%) translateY(-10px);}
+      60% {transform: translateX(-50%) translateY(-5px);}
+    }
+    
+    @keyframes slideUp {
+      from { transform: translateX(-50%) translateY(20px); opacity: 0; }
+      to { transform: translateX(-50%) translateY(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="left">
+      <i class="fa-solid fa-arrow-left" id="backButton"></i>
+      <h2>KFC Menu</h2>
+    </div>
+    <div class="icons">
+      <i class="fa-solid fa-share-nodes" id="shareButton"></i>
+      <i class="fa-solid fa-magnifying-glass" id="searchButton"></i>
+    </div>
+  </div>
+
+  <!-- Restaurant Navigation -->
+  <div class="restaurant-nav">
+    <button class="restaurant-btn" onclick="window.location.href='mcdonalds.html'">McDonald's</button>
+    <button class="restaurant-btn active">KFC</button>
+    <button class="restaurant-btn" onclick="window.location.href='pizzahut.html'">Pizza Hut</button>
+    <button class="restaurant-btn" onclick="window.location.href='burgerking.html'">Burger King</button>
+    <button class="restaurant-btn" onclick="window.location.href='subway.html'">Subway</button>
+  </div>
+
+  <!-- Search Bar -->
+  <div class="search-container" id="searchContainer">
+    <div class="search-box">
+      <input type="text" placeholder="Search menu..." id="searchInput">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab" data-target="all">All</div>
+    <div class="tab active" data-target="popular">Popular</div>
+    <div class="tab" data-target="whats-new">What's New</div>
+    <div class="tab" data-target="meat">Meat</div>
+    <div class="tab" data-target="chicken">Chicken</div>
+    <div class="tab" data-target="fish">Fish</div>
+    <div class="tab" data-target="happy-meal">Happy Meal</div>
+    <div class="tab" data-target="duo-mabrouk">Duo Mabrouk</div>
+  </div>
+
+  <!-- Menu -->
+  <div class="menu">
+    <div class="item" data-category="meat">
+      <div class="item-text">
+        <p class="item-title">Big Mac </p>
+        <p class="item-desc">Nothing compares to two 100% Canadian beef patties, special sauce, crisp lettuce, processed cheese, pickles and onions on a toasted</p>
+        <p class="item-calories">696 kcal</p>
+        <p class="item-price">13.00 MAD</p>
+      </div>
+      <div class="item-img">
+        <img src="https://shippini.ma/wp-content/uploads/2023/09/Menu-Big-Mac™.jpg" alt="meal">
+        <button class="add-to-cart" data-title="Big Mac" data-price="13.00">+</button>
+      </div>
+    </div>
+
+    <div class="item" data-category="popular">
+      <div class="item-text">
+        <p class="item-title">Dirty Louisiana Burger Meal</p>
+        <p class="item-desc">An Original Recipe fillet topped with cheese, a crispy hash brown, lettuce,...</p>
+        <p class="item-calories">696 kcal</p>
+        <p class="item-price">11.49 MAD</p>
+      </div>
+      <div class="item-img">
+        <img src="https://via.placeholder.com/90x90/eee/999?text=Burger" alt="meal">
+        <button class="add-to-cart" data-title="Dirty Louisiana Burger Meal" data-price="11.49">+</button>
+      </div>
+    </div>
+
+    <div class="item" data-category="chicken">
+      <div class="item-text">
+        <p class="item-title">Dirty Dipping Feast: 14 pc</p>
+        <p class="item-desc">14 Mini Fillets, 2 regular Signature fries and 2 of our NEW Dirty Loaded Fries,...</p>
+        <p class="item-calories">1820 kcal</p>
+        <p class="item-price">11.49 MAD</p>
+      </div>
+      <div class="item-img">
+        <img src="https://via.placeholder.com/90x90/eee/999?text=Feast" alt="meal">
+        <button class="add-to-cart" data-title="Dirty Dipping Feast: 14 pc" data-price="11.49">+</button>
+      </div>
+    </div>
+    
+    <div class="item" data-category="happy-meal">
+      <div class="item-text">
+        <p class="item-title">Happy meal cheese burger </p>
+        <p class="item-desc">Cheeseburger, World Famous Fries - Small (Small), 1% Partly Skimmed Milk - 250 ml, Yogurt Tube, Apple Slices</p>
+        <p class="item-calories">690 Cals</p>
+        <p class="item-price">40.00 MAD</p>
+      </div>
+      <div class="item-img">
+        <img src="https://s7d1.scene7.com/is/image/mcdonalds/mcdonalds-cheeseburger-happy-meal-apples-1:nutrition-calculator-tile?wid=822&hei=822&dpr=off" alt="meal">
+        <button class="add-to-cart" data-title="Happy meal cheese burger" data-price="40.00">+</button>
+      </div>
+    </div>
+
+    <div class="item" data-category="meat">
+      <div class="item-text">
+        <p class="item-title">Dirty Louisiana Burger</p>
+        <p class="item-desc">An Original Recipe fillet topped with cheese, a crispy hash brown, lettuce,...</p>
+        <p class="item-calories">696 kcal</p>
+        <p class="item-price">11.49 MAD</p>
+      </div>
+      <div class="item-img">
+        <img src="https://via.placeholder.com/90x90/eee/999?text=Louisiana" alt="meal">
+        <button class="add-to-cart" data-title="Dirty Louisiana Burger" data-price="11.49">+</button>
+      </div>
+    </div>
+
+    <div class="item" data-category="popular">
+      <div class="item-text">
+        <p class="item-title">Dirty Loaded Fries</p>
+        <p class="item-desc">Our Signature Fries topped with Popcorn Chicken, and smothered with...</p>
+        <p class="item-calories">485 kcal</p>
+        <p class="item-price">11.49 MAD</p>
+      </div>
+      <div class="item-img">
+        <img src="https://via.placeholder.com/90x90/eee/999?text=Fries" alt="fries">
+        <button class="add-to-cart" data-title="Dirty Loaded Fries" data-price="11.49">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Fixed Basket Button -->
+  <div class="fixed-basket" id="fixedBasket">
+    <button class="view-basket-btn" id="viewBasketBtn">
+      <span>View Basket</span>
+      <div class="item-count" id="itemCount">0</div>
+    </button>
+  </div>
+
+  <!-- Basket Summary -->
+  <div class="basket-summary" id="basketSummary">
+    <div class="basket-header">
+      <div class="basket-title">Your Basket</div>
+      <div class="basket-count" id="basketCount">0</div>
+    </div>
+    <div class="basket-items" id="basketItems">
+      <!-- Items will be added here dynamically -->
+    </div>
+    <div class="basket-total">
+      <span>Total:</span>
+      <span id="basketTotal">0.00 MAD</span>
+    </div>
+    <!-- إضافة زر الدفع -->
+    <button id="checkoutButton" class="checkout-btn">
+      Proceed to Checkout
+    </button>
+  </div>
+
+  <script>
+    // DOM Elements
+    const backButton = document.getElementById('backButton');
+    const searchButton = document.getElementById('searchButton');
+    const shareButton = document.getElementById('shareButton');
+    const searchContainer = document.getElementById('searchContainer');
+    const searchInput = document.getElementById('searchInput');
+    const tabs = document.querySelectorAll('.tab');
+    const items = document.querySelectorAll('.item');
+    const addButtons = document.querySelectorAll('.add-to-cart');
+    const fixedBasket = document.getElementById('fixedBasket');
+    const itemCount = document.getElementById('itemCount');
+    const basketSummary = document.getElementById('basketSummary');
+    const basketCount = document.getElementById('basketCount');
+    const basketItems = document.getElementById('basketItems');
+    const basketTotal = document.getElementById('basketTotal');
+    const viewBasketBtn = document.getElementById('viewBasketBtn');
+    const checkoutButton = document.getElementById('checkoutButton');
+
+    // Shopping cart
+    let cart = [];
+    let total = 0;
+    let currentCount = 0;
+
+    // Initialize the cart from localStorage if available
+    function initCart() {
+      const savedCart = localStorage.getItem('kfcCart');
+      if (savedCart) {
+        cart = JSON.parse(savedCart);
+        updateCart();
+      }
+    }
+
+    // Save cart to localStorage
+    function saveCart() {
+      localStorage.setItem('kfcCart', JSON.stringify(cart));
+    }
+
+    // Back button functionality
+    backButton.addEventListener('click', () => {
+      // العودة إلى صفحة المطاعم الرئيسية
+      window.location.href = 'index.html';
+    });
+
+    // Search functionality
+    searchButton.addEventListener('click', () => {
+      searchContainer.classList.toggle('active');
+      if (searchContainer.classList.contains('active')) {
+        searchInput.focus();
+      }
+    });
+
+    // Real-time search filtering
+    searchInput.addEventListener('input', () => {
+      const searchText = searchInput.value.toLowerCase();
+      
+      items.forEach(item => {
+        const title = item.querySelector('.item-title').textContent.toLowerCase();
+        const desc = item.querySelector('.item-desc').textContent.toLowerCase();
+        
+        if (title.includes(searchText) || desc.includes(searchText)) {
+          item.style.display = 'flex';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    });
+
+    // Share functionality
+    shareButton.addEventListener('click', () => {
+      if (navigator.share) {
+        navigator.share({
+          title: 'KFC Menu',
+          text: 'Check out this delicious KFC menu!',
+          url: window.location.href
+        })
+        .then(() => console.log('Shared successfully'))
+        .catch(error => console.log('Error sharing:', error));
+      } else {
+        alert('Share functionality is not supported in your browser. URL: ' + window.location.href);
+      }
+    });
+
+    // Tab filtering
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        // Remove active class from all tabs
+        tabs.forEach(t => t.classList.remove('active'));
+        
+        // Add active class to clicked tab
+        tab.classList.add('active');
+        
+        // Filter items by category
+        const target = tab.getAttribute('data-target');
+        
+        items.forEach(item => {
+          if (target === 'all' || item.getAttribute('data-category') === target) {
+            item.style.display = 'flex';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Add to cart functionality
+    addButtons.forEach(button => {
+      button.addEventListener('click', (e) => {
+        const title = e.target.getAttribute('data-title');
+        const price = parseFloat(e.target.getAttribute('data-price'));
+        
+        // Add item to cart
+        addToCart(title, price);
+        
+        // Show fixed basket if it's the first item
+        if (cart.length === 1) {
+          fixedBasket.classList.add('active');
+        }
+        
+        // Show basket summary
+        basketSummary.classList.add('active');
+        
+        // Hide basket summary after 3 seconds
+        setTimeout(() => {
+          if (cart.length > 0) {
+            basketSummary.classList.remove('active');
+          }
+        }, 3000);
+      });
+    });
+
+    // Add item to cart function
+    function addToCart(title, price) {
+      // Check if item already exists in cart
+      const existingItem = cart.find(item => item.title === title);
+      
+      if (existingItem) {
+        existingItem.quantity += 1;
+        createStarsAnimation(itemCount);
+      } else {
+        cart.push({
+          title: title,
+          price: price,
+          quantity: 1
+        });
+      }
+      
+      // Update cart UI and save to localStorage
+      updateCart();
+      saveCart();
+    }
+
+    // Create stars animation
+    function createStarsAnimation(element) {
+      for (let i = 0; i < 5; i++) {
+        const star = document.createElement('div');
+        star.classList.add('star');
+        star.innerHTML = '★';
+        
+        // Random direction and distance
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 15 + Math.random() * 20;
+        const tx = Math.cos(angle) * distance;
+        const ty = Math.sin(angle) * distance;
+        
+        star.style.setProperty('--tx', `${tx}px`);
+        star.style.setProperty('--ty', `${ty}px`);
+        star.style.animation = `starAnimation ${0.5 + Math.random() * 0.5}s ease-out forwards`;
+        star.style.animationDelay = `${i * 0.1}s`;
+        
+        element.appendChild(star);
+        
+        // Remove star after animation completes
+        setTimeout(() => {
+          if (element.contains(star)) {
+            element.removeChild(star);
+          }
+        }, 1000);
+      }
+    }
+
+    // Update cart UI
+    function updateCart() {
+      // Clear current content
+      basketItems.innerHTML = '';
+      total = 0;
+      let count = 0;
+      
+      // Add items to basket
+      cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        count += item.quantity;
+        
+        const basketItem = document.createElement('div');
+        basketItem.classList.add('basket-item');
+        basketItem.innerHTML = `
+          <span>${item.title} x${item.quantity}</span>
+          <span>${itemTotal.toFixed(2)} MAD</span>
+        `;
+        
+        basketItems.appendChild(basketItem);
+      });
+      
+      // Update count and total
+      basketCount.textContent = count;
+      basketTotal.textContent = total.toFixed(2) + ' MAD';
+      
+      // Update fixed basket count with animation if changed
+      if (currentCount !== count) {
+        itemCount.textContent = count;
+        currentCount = count;
+      }
+      
+      // Show or hide fixed basket based on cart contents
+      if (count > 0) {
+        fixedBasket.classList.add('active');
+      } else {
+        fixedBasket.classList.remove('active');
+      }
+    }
+
+    // Toggle basket summary when clicking the fixed basket
+    viewBasketBtn.addEventListener('click', () => {
+      basketSummary.classList.toggle('active');
+    });
+
+    // Close basket summary when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.basket-summary') && !e.target.closest('.fixed-basket')) {
+        basketSummary.classList.remove('active');
+      }
+    });
+
+    // Checkout button functionality
+    checkoutButton.addEventListener('click', () => {
+      if (cart.length === 0) {
+        alert('Your basket is empty. Please add items before proceeding to checkout.');
+        return;
+      }
+      
+      // حفظ السلة في localStorage
+      localStorage.setItem('kfcCart', JSON.stringify(cart));
+      
+      // الانتقال إلى صفحة الدفع
+      window.location.href = 'checkout.html';
+    });
+
+    // Initialize the cart when the page loads
+    document.addEventListener('DOMContentLoaded', initCart);
+  </script>
+</body>
+</html>
