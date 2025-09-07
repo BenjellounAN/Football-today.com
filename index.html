@@ -128,6 +128,10 @@
       background:var(--accent);
       border-radius:50%;
       border:2px solid var(--card);
+      display: none;
+    }
+    .icon-btn .dot.show {
+      display: block;
     }
 
     /* Search bar */
@@ -367,6 +371,7 @@
       cursor:pointer;
       border:none;
       background:none;
+      position: relative;
     }
     .nav-item.active{
       color:var(--primary);
@@ -382,6 +387,19 @@
     .nav-item.active .icon{
       color:var(--primary);
       transform:translateY(-2px);
+    }
+    .nav-item .cart-dot {
+      position: absolute;
+      top: 0;
+      right: 8px;
+      width: 10px;
+      height: 10px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: none;
+    }
+    .nav-item .cart-dot.show {
+      display: block;
     }
 
     /* Responsive adjustments */
@@ -524,6 +542,25 @@
       transform: translateY(-2px);
       box-shadow: var(--shadow);
     }
+
+    /* Add to cart button */
+    .add-to-cart {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: var(--radius);
+      padding: 10px 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 12px;
+      width: 100%;
+    }
+    
+    .add-to-cart:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+    }
   </style>
 </head>
 <body>
@@ -558,7 +595,7 @@
         <div class="icons">
           <button class="icon-btn" aria-label="cart" id="cartIcon">
             <i class="fa-solid fa-basket-shopping" style="color:var(--primary);font-size:18px"></i>
-            <span class="dot"></span>
+            <span class="dot" id="cartDot"></span>
           </button>
           <button class="icon-btn" aria-label="profile">
             <i class="fa-regular fa-user" style="color:var(--primary);font-size:18px"></i>
@@ -603,6 +640,7 @@
               <span class="tag">Fries</span>
               <span class="tag">$</span>
             </div>
+            <button class="add-to-cart" data-restaurant="McDonald's">Add to Cart</button>
           </div>
         </article>
 
@@ -624,6 +662,7 @@
               <span class="tag">Pasta</span>
               <span class="tag">$$</span>
             </div>
+            <button class="add-to-cart" data-restaurant="Tony's Pizza">Add to Cart</button>
           </div>
         </article>
 
@@ -645,6 +684,7 @@
               <span class="tag">Ramen</span>
               <span class="tag">$$$</span>
             </div>
+            <button class="add-to-cart" data-restaurant="Tokyo Sushi">Add to Cart</button>
           </div>
         </article>
 
@@ -675,6 +715,7 @@
               <span class="tag">Combo</span>
               <span class="tag">Family Meal</span>
             </div>
+            <button class="add-to-cart" data-restaurant="Gourmet Burger">Add to Cart</button>
           </div>
         </article>
 
@@ -694,6 +735,7 @@
               <span class="tag">Pasta</span>
               <span class="tag">Garlic Bread</span>
             </div>
+            <button class="add-to-cart" data-restaurant="Pasta Paradise">Add to Cart</button>
           </div>
         </article>
 
@@ -713,6 +755,7 @@
               <span class="tag">Vegan</span>
               <span class="tag">Gluten-Free</span>
             </div>
+            <button class="add-to-cart" data-restaurant="Green Garden">Add to Cart</button>
           </div>
         </article>
 
@@ -733,6 +776,7 @@
         <button class="nav-item" id="cartButton">
           <div class="icon"><i class="fa-solid fa-basket-shopping"></i></div>
           <div class="label">Cart</div>
+          <span class="cart-dot" id="cartNavDot"></span>
         </button>
         <button class="nav-item">
           <div class="icon"><i class="fa-regular fa-user"></i></div>
@@ -951,21 +995,52 @@
       window.location.href = 'checkout.html';
     });
 
-    // Cart synchronization between icon and button
-    function updateCartIndicator(count) {
-      const dot = document.querySelector('.icon-btn .dot');
-      if (count > 0) {
-        dot.style.display = 'block';
-        // You could also update the count in the dot if needed
+    // Cart functionality
+    const cartDot = document.getElementById('cartDot');
+    const cartNavDot = document.getElementById('cartNavDot');
+    
+    // Function to update cart indicator
+    function updateCartIndicator() {
+      const cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+      
+      if (cartItems.length > 0) {
+        cartDot.classList.add('show');
+        cartNavDot.classList.add('show');
       } else {
-        dot.style.display = 'none';
+        cartDot.classList.remove('show');
+        cartNavDot.classList.remove('show');
       }
     }
-
-    // Initialize cart from localStorage
+    
+    // Add to cart functionality
+    document.querySelectorAll('.add-to-cart').forEach(button => {
+      button.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevent card click event
+        
+        const restaurant = this.getAttribute('data-restaurant');
+        let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        
+        // Add item to cart
+        cartItems.push({
+          id: Date.now(),
+          restaurant: restaurant,
+          addedAt: new Date().toISOString()
+        });
+        
+        // Save to localStorage
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        
+        // Update cart indicator
+        updateCartIndicator();
+        
+        // Show success message
+        showToast(`تمت إضافة ${restaurant} إلى السلة`);
+      });
+    });
+    
+    // Initialize cart indicator on page load
     window.addEventListener('load', function() {
-      const cartCount = localStorage.getItem('cartCount') || 0;
-      updateCartIndicator(cartCount);
+      updateCartIndicator();
     });
   </script>
 </body>
