@@ -3,51 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KFC Menu</title>
+  <title>McDonald's - Big Mac</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* إضافة شريط التنقل بين المطاعم */
-    .restaurant-nav {
-      display: flex;
-      overflow-x: auto;
-      padding: 10px;
-      background: #f8f8f8;
-      border-bottom: 1px solid #ddd;
-      position: sticky;
-      top: 49px;
-      z-index: 8;
+    :root {
+      --primary-red: #8B0000;
+      --primary-red-light: #a52a2a;
+      --primary-red-dark: #660000;
+      --accent-gold: #D4AF37;
+      --text-dark: #2C3E50;
+      --text-light: #7F8C8D;
+      --bg-light: #F9F9F9;
+      --border-light: #ECF0F1;
+      --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
     
-    .restaurant-btn {
-      padding: 8px 16px;
-      border-radius: 20px;
-      margin-right: 10px;
-      white-space: nowrap;
-      background: white;
-      border: 1px solid #ddd;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .restaurant-btn.active {
-      background: darkred;
-      color: white;
-      border-color: darkred;
-    }
-    
-    .restaurant-btn:hover {
-      background: #e0e0e0;
-    }
-    
-    /* باقي الأنماط تبقى كما هي */
-    body {
-      font-family: Arial, sans-serif;
+    * {
       margin: 0;
-      background: #fff;
-      color: #222;
-      padding-bottom: 80px; /* Space for fixed basket */
+      padding: 0;
+      box-sizing: border-box;
     }
-
+    
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: white;
+      color: #333;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+    
     /* Header */
     .header {
       display: flex;
@@ -91,7 +76,7 @@
       border-bottom: 1px solid #ddd;
       background: #fff;
       position: sticky;
-      top: 98px;
+      top: 49px;
       z-index: 9;
     }
     .tab {
@@ -105,7 +90,7 @@
       transition: all 0.3s;
     }
     .tab.active {
-      background: darkred;
+      background: var(--primary-red);
       color: #fff;
       font-weight: bold;
     }
@@ -114,35 +99,6 @@
     }
     .tab.active:hover {
       background: #a00;
-    }
-
-    /* Search Bar */
-    .search-container {
-      display: none;
-      padding: 10px;
-      background: #fff;
-      border-bottom: 1px solid #ddd;
-      position: sticky;
-      top: 98px;
-      z-index: 9;
-    }
-    .search-container.active {
-      display: block;
-    }
-    .search-box {
-      display: flex;
-      align-items: center;
-      background: #f3f3f3;
-      border-radius: 20px;
-      padding: 8px 15px;
-    }
-    .search-box input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      outline: none;
-      padding: 5px;
-      font-size: 14px;
     }
 
     /* Menu Items */
@@ -179,6 +135,7 @@
     .item-price {
       font-weight: bold;
       font-size: 14px;
+      color: var(--primary-red);
     }
 
     .item-img {
@@ -198,7 +155,7 @@
       height: 32px;
       border-radius: 50%;
       border: none;
-      background: darkred;
+      background: var(--primary-red);
       color: #fff;
       font-size: 18px;
       cursor: pointer;
@@ -206,7 +163,7 @@
       transition: all 0.2s;
     }
     .item-img button:hover {
-      background: #a00;
+      background: var(--primary-red-dark);
       transform: scale(1.05);
     }
 
@@ -224,7 +181,7 @@
       animation: bounce 0.5s;
     }
     .view-basket-btn {
-      background: darkred;
+      background: var(--primary-red);
       color: white;
       border: none;
       border-radius: 30px;
@@ -239,12 +196,12 @@
       transition: all 0.3s;
     }
     .view-basket-btn:hover {
-      background: #a00;
+      background: var(--primary-red-dark);
       transform: translateY(-2px);
     }
     .item-count {
       background: #fff;
-      color: darkred;
+      color: var(--primary-red);
       border-radius: 50%;
       width: 24px;
       height: 24px;
@@ -312,7 +269,7 @@
       font-size: 16px;
     }
     .basket-count {
-      background: darkred;
+      background: var(--primary-red);
       color: white;
       border-radius: 50%;
       width: 24px;
@@ -356,6 +313,302 @@
       font-weight: bold;
     }
 
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      backdrop-filter: blur(5px);
+      padding: 20px;
+    }
+
+    /* Modal */
+    .modal {
+      background: white;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow: hidden;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+      animation: modalAppear 0.4s ease forwards;
+    }
+    
+    @keyframes modalAppear {
+      from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* Fixed Header */
+    .modal-header {
+      position: sticky;
+      top: 0;
+      background: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border-light);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      z-index: 100;
+    }
+    
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+    
+    .close-btn {
+      background: var(--bg-light);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .close-btn:hover {
+      background: var(--primary-red);
+      color: white;
+      transform: rotate(90deg);
+    }
+
+    /* Modal Content */
+    .modal-content {
+      padding: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+    
+    .modal-image {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .modal-item-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-bottom: 5px;
+    }
+    
+    .modal-calories {
+      color: var(--primary-red);
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    
+    .modal-desc {
+      color: var(--text-light);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+    
+    /* Sections */
+    .section-title-modal {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-dark);
+      margin: 20px 0 15px;
+      text-align: left;
+      display: flex;
+      align-items: center;
+    }
+    
+    .section-title-modal::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background: var(--border-light);
+      margin-left: 15px;
+    }
+    
+    /* Options */
+    .option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-light);
+    }
+    
+    .option-label {
+      text-align: left;
+      flex: 1;
+    }
+    
+    .option-title {
+      font-weight: 500;
+      display: block;
+      margin-bottom: 3px;
+    }
+    
+    .option-desc {
+      font-size: 12px;
+      color: var(--text-light);
+    }
+    
+    .option-price {
+      font-weight: 600;
+      color: var(--primary-red);
+      margin: 0 15px;
+    }
+    
+    .option input[type="checkbox"],
+    .option input[type="radio"] {
+      accent-color: var(--primary-red);
+      width: 20px;
+      height: 20px;
+      cursor: pointer;
+    }
+    
+    /* Options Group */
+    .options-group {
+      border: 1px solid var(--border-light);
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    
+    .group-header {
+      background: var(--bg-light);
+      padding: 15px;
+      font-weight: 600;
+      font-size: 15px;
+      color: var(--text-dark);
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .group-header i {
+      color: var(--primary-red);
+    }
+    
+    .group-content {
+      padding: 0 15px;
+    }
+    
+    /* Fixed Footer */
+    .fixed-footer {
+      background: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border-light);
+      box-shadow: 0 -4px 15px rgba(0, 0, 0, 0.05);
+      position: sticky;
+      bottom: 0;
+      z-index: 100;
+    }
+    
+    /* Counter */
+    .counter {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    
+    .counter-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: var(--bg-light);
+      color: var(--text-dark);
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s ease;
+    }
+    
+    .counter-btn:hover {
+      background: var(--primary-red);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .counter-value {
+      font-weight: 700;
+      font-size: 18px;
+      min-width: 30px;
+      text-align: center;
+    }
+    
+    /* Add Button */
+    .modal-add-btn {
+      background: linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%);
+      color: white;
+      border: none;
+      padding: 9px 9px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .modal-add-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(139, 0, 0, 0.4);
+    }
+    
+    .modal-add-btn:active {
+      transform: translateY(0);
+    }
+    
+    .price {
+      font-weight: 700;
+      font-size: 12px;
+    }
+    
+    /* Animation for added items */
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+    
+    .pulse {
+      animation: pulse 0.5s ease;
+    }
+
     /* Scrollbar */
     ::-webkit-scrollbar {
       width: 5px;
@@ -390,28 +643,11 @@
   <div class="header">
     <div class="left">
       <i class="fa-solid fa-arrow-left" id="backButton"></i>
-      <h2>KFC Menu</h2>
+      <h2>McDonald's Menu</h2>
     </div>
     <div class="icons">
       <i class="fa-solid fa-share-nodes" id="shareButton"></i>
       <i class="fa-solid fa-magnifying-glass" id="searchButton"></i>
-    </div>
-  </div>
-
-  <!-- Restaurant Navigation -->
-  <div class="restaurant-nav">
-    <button class="restaurant-btn" onclick="window.location.href='mcdonalds.html'">McDonald's</button>
-    <button class="restaurant-btn active">KFC</button>
-    <button class="restaurant-btn" onclick="window.location.href='pizzahut.html'">Pizza Hut</button>
-    <button class="restaurant-btn" onclick="window.location.href='burgerking.html'">Burger King</button>
-    <button class="restaurant-btn" onclick="window.location.href='subway.html'">Subway</button>
-  </div>
-
-  <!-- Search Bar -->
-  <div class="search-container" id="searchContainer">
-    <div class="search-box">
-      <input type="text" placeholder="Search menu..." id="searchInput">
-      <i class="fa-solid fa-magnifying-glass"></i>
     </div>
   </div>
 
@@ -438,33 +674,33 @@
       </div>
       <div class="item-img">
         <img src="https://shippini.ma/wp-content/uploads/2023/09/Menu-Big-Mac™.jpg" alt="meal">
-        <button class="add-to-cart" data-title="Big Mac" data-price="13.00">+</button>
+        <button class="add-to-cart" data-title="Big Mac" data-price="13.00" data-img="https://shippini.ma/wp-content/uploads/2023/09/Menu-Big-Mac™.jpg">+</button>
       </div>
     </div>
 
     <div class="item" data-category="popular">
       <div class="item-text">
-        <p class="item-title">Dirty Louisiana Burger Meal</p>
-        <p class="item-desc">An Original Recipe fillet topped with cheese, a crispy hash brown, lettuce,...</p>
-        <p class="item-calories">696 kcal</p>
+        <p class="item-title">McChicken</p>
+        <p class="item-desc">Crispy chicken patty with mayonnaise and shredded lettuce on a sesame seed bun.</p>
+        <p class="item-calories">596 kcal</p>
         <p class="item-price">11.49 MAD</p>
       </div>
       <div class="item-img">
-        <img src="https://via.placeholder.com/90x90/eee/999?text=Burger" alt="meal">
-        <button class="add-to-cart" data-title="Dirty Louisiana Burger Meal" data-price="11.49">+</button>
+        <img src="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/McChicken.png" alt="meal">
+        <button class="add-to-cart" data-title="McChicken" data-price="11.49" data-img="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/McChicken.png">+</button>
       </div>
     </div>
 
     <div class="item" data-category="chicken">
       <div class="item-text">
-        <p class="item-title">Dirty Dipping Feast: 14 pc</p>
-        <p class="item-desc">14 Mini Fillets, 2 regular Signature fries and 2 of our NEW Dirty Loaded Fries,...</p>
-        <p class="item-calories">1820 kcal</p>
-        <p class="item-price">11.49 MAD</p>
+        <p class="item-title">Chicken McNuggets</p>
+        <p class="item-desc">Made with white meat, our tender and juicy Chicken McNuggets are crispy on the outside and soft on the inside.</p>
+        <p class="item-calories">480 kcal</p>
+        <p class="item-price">15.49 MAD</p>
       </div>
       <div class="item-img">
-        <img src="https://via.placeholder.com/90x90/eee/999?text=Feast" alt="meal">
-        <button class="add-to-cart" data-title="Dirty Dipping Feast: 14 pc" data-price="11.49">+</button>
+        <img src="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/Chicken-McNuggets.png" alt="meal">
+        <button class="add-to-cart" data-title="Chicken McNuggets" data-price="15.49" data-img="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/Chicken-McNuggets.png">+</button>
       </div>
     </div>
     
@@ -477,33 +713,33 @@
       </div>
       <div class="item-img">
         <img src="https://s7d1.scene7.com/is/image/mcdonalds/mcdonalds-cheeseburger-happy-meal-apples-1:nutrition-calculator-tile?wid=822&hei=822&dpr=off" alt="meal">
-        <button class="add-to-cart" data-title="Happy meal cheese burger" data-price="40.00">+</button>
+        <button class="add-to-cart" data-title="Happy meal cheese burger" data-price="40.00" data-img="https://s7d1.scene7.com/is/image/mcdonalds/mcdonalds-cheeseburger-happy-meal-apples-1:nutrition-calculator-tile?wid=822&hei=822&dpr=off">+</button>
       </div>
     </div>
 
     <div class="item" data-category="meat">
       <div class="item-text">
-        <p class="item-title">Dirty Louisiana Burger</p>
-        <p class="item-desc">An Original Recipe fillet topped with cheese, a crispy hash brown, lettuce,...</p>
-        <p class="item-calories">696 kcal</p>
-        <p class="item-price">11.49 MAD</p>
+        <p class="item-title">Cheeseburger</p>
+        <p class="item-desc">A classic cheeseburger with a 100% beef patty, cheese, pickles, onion, ketchup and mustard.</p>
+        <p class="item-calories">450 kcal</p>
+        <p class="item-price">8.49 MAD</p>
       </div>
       <div class="item-img">
-        <img src="https://via.placeholder.com/90x90/eee/999?text=Louisiana" alt="meal">
-        <button class="add-to-cart" data-title="Dirty Louisiana Burger" data-price="11.49">+</button>
+        <img src="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/Cheeseburger.png" alt="meal">
+        <button class="add-to-cart" data-title="Cheeseburger" data-price="8.49" data-img="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/Cheeseburger.png">+</button>
       </div>
     </div>
 
     <div class="item" data-category="popular">
       <div class="item-text">
-        <p class="item-title">Dirty Loaded Fries</p>
-        <p class="item-desc">Our Signature Fries topped with Popcorn Chicken, and smothered with...</p>
-        <p class="item-calories">485 kcal</p>
-        <p class="item-price">11.49 MAD</p>
+        <p class="item-title">French Fries</p>
+        <p class="item-desc">World Famous Fries, made from quality potatoes and cooked to golden perfection.</p>
+        <p class="item-calories">340 kcal</p>
+        <p class="item-price">7.49 MAD</p>
       </div>
       <div class="item-img">
-        <img src="https://via.placeholder.com/90x90/eee/999?text=Fries" alt="fries">
-        <button class="add-to-cart" data-title="Dirty Loaded Fries" data-price="11.49">+</button>
+        <img src="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/Fries.png" alt="fries">
+        <button class="add-to-cart" data-title="French Fries" data-price="7.49" data-img="https://www.mcdonalds.com.mt/wp-content/uploads/2020/11/Fries.png">+</button>
       </div>
     </div>
   </div>
@@ -535,13 +771,202 @@
     </button>
   </div>
 
+  <!-- Overlay & Modal -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <!-- Fixed Header with Title and Close Button -->
+      <div class="modal-header">
+        <div class="modal-title">Customize Your Big Mac</div>
+        <div class="close-btn" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </div>
+      </div>
+
+      <!-- Scrollable Content -->
+      <div class="modal-content">
+        <img class="modal-image" src="https://shippini.ma/wp-content/uploads/2023/09/Menu-Big-Mac™.jpg" alt="Big Mac">
+        
+        <h2 class="modal-item-title">Big Mac</h2>
+        <div class="modal-calories">
+          <i class="fas fa-fire"></i> 696 kcal
+        </div>
+        <p class="modal-desc">
+          Nothing compares to two 100% Canadian beef patties, special sauce, crisp lettuce, processed cheese, pickles and onions on a toasted
+        </p>
+        
+        <!-- Choice Drink Section -->
+        <div class="section-title-modal">
+          <i class="fas fa-glass"></i> Choice of Drink
+        </div>
+        
+        <div class="options-group">
+          <div class="group-header">
+            <i class="fas fa-cog"></i> Select your drink
+          </div>
+          <div class="group-content">
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Coca Cola</span>
+                <span class="option-desc">330ml can</span>
+              </div>
+              <span class="option-price">+5.00 MAD</span>
+              <input type="radio" name="drink" value="coca" data-price="5.00">
+            </div>
+            
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Sprite</span>
+                <span class="option-desc">330ml can</span>
+              </div>
+              <span class="option-price">+5.00 MAD</span>
+              <input type="radio" name="drink" value="sprite" data-price="5.00" checked>
+            </div>
+            
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Fanta</span>
+                <span class="option-desc">330ml can</span>
+              </div>
+              <span class="option-price">+5.00 MAD</span>
+              <input type="radio" name="drink" value="fanta" data-price="5.00">
+            </div>
+            
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Water</span>
+                <span class="option-desc">500ml bottle</span>
+              </div>
+              <span class="option-price">+3.00 MAD</span>
+              <input type="radio" name="drink" value="water" data-price="3.00">
+            </div>
+          </div>
+        </div>
+        
+        <!-- Remove ingredients Section -->
+        <div class="section-title-modal">
+          <i class="fas fa-minus-circle"></i> Remove ingredients
+        </div>
+
+        <div class="option">
+          <div class="option-label">
+            <span class="option-title">No Onions</span>
+            <span class="option-desc">Remove onions from your burger</span>
+          </div>
+          <input type="checkbox" name="remove" value="no-onions" data-price="0">
+        </div>
+        
+        <div class="option">
+          <div class="option-label">
+            <span class="option-title">No Pickles</span>
+            <span class="option-desc">Remove pickles from your burger</span>
+          </div>
+          <input type="checkbox" name="remove" value="no-pickles" data-price="0">
+        </div>
+        
+        <div class="option">
+          <div class="option-label">
+            <span class="option-title">No Lettuce</span>
+            <span class="option-desc">Remove lettuce from your burger</span>
+          </div>
+          <input type="checkbox" name="remove" value="no-lettuce" data-price="0">
+        </div>
+        
+        <div class="option">
+          <div class="option-label">
+            <span class="option-title">No Sauce</span>
+            <span class="option-desc">Remove Big Mac sauce from your burger</span>
+          </div>
+          <input type="checkbox" name="remove" value="no-sauce" data-price="0">
+        </div>
+
+        <!-- Extras Section -->
+        <div class="section-title-modal">
+          <i class="fas fa-plus-circle"></i> Add Extras
+        </div>
+        
+        <div class="options-group">
+          <div class="group-header">
+            <i class="fas fa-star"></i> Add extras to your meal
+          </div>
+          <div class="group-content">
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Extra Cheese</span>
+                <span class="option-desc">Add an extra slice of cheese</span>
+              </div>
+              <span class="option-price">+2.00 MAD</span>
+              <input type="checkbox" name="extras" value="extra-cheese" data-price="2.00">
+            </div>
+            
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Extra Patty</span>
+                <span class="option-desc">Add an extra beef patty</span>
+              </div>
+              <span class="option-price">+8.00 MAD</span>
+              <input type="checkbox" name="extras" value="extra-patty" data-price="8.00">
+            </div>
+            
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Bacon</span>
+                <span class="option-desc">Add crispy bacon strips</span>
+              </div>
+              <span class="option-price">+4.00 MAD</span>
+              <input type="checkbox" name="extras" value="bacon" data-price="4.00">
+            </div>
+            
+            <div class="option">
+              <div class="option-label">
+                <span class="option-title">Extra Sauce</span>
+                <span class="option-desc">Add extra Big Mac sauce</span>
+              </div>
+              <span class="option-price">+1.50 MAD</span>
+              <input type="checkbox" name="extras" value="extra-sauce" data-price="1.50">
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Fixed Footer with Controls -->
+      <div class="fixed-footer">
+        <div class="counter">
+          <button class="counter-btn" onclick="decrement()">
+            <i class="fas fa-minus"></i>
+          </button>
+          <span class="counter-value" id="counterValue">1</span>
+          <button class="counter-btn" onclick="increment()">
+            <i class="fas fa-plus"></i>
+          </button>
+        </div>
+        
+        <button class="modal-add-btn" onclick="addToCart()">
+          <i class="fas fa-shopping-cart"></i>
+          Add• <span class="price" id="totalPrice">13.00 MAD</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <script>
-    // DOM Elements
+    // البيانات الأساسية
+    let count = 1;
+    let basePrice = 13.00;
+    let currentItem = {
+      name: "Big Mac",
+      basePrice: basePrice,
+      quantity: 1,
+      drink: "sprite",
+      remove: [],
+      extras: [],
+      totalPrice: basePrice,
+      img: "https://shippini.ma/wp-content/uploads/2023/09/Menu-Big-Mac™.jpg"
+    };
+    
+    // عناصر DOM
     const backButton = document.getElementById('backButton');
     const searchButton = document.getElementById('searchButton');
     const shareButton = document.getElementById('shareButton');
-    const searchContainer = document.getElementById('searchContainer');
-    const searchInput = document.getElementById('searchInput');
     const tabs = document.querySelectorAll('.tab');
     const items = document.querySelectorAll('.item');
     const addButtons = document.querySelectorAll('.add-to-cart');
@@ -555,60 +980,31 @@
     const checkoutButton = document.getElementById('checkoutButton');
 
     // Shopping cart
-    let cart = [];
+    let cart = JSON.parse(localStorage.getItem('mcdonaldsCart')) || [];
     let total = 0;
     let currentCount = 0;
 
     // Initialize the cart from localStorage if available
     function initCart() {
-      const savedCart = localStorage.getItem('kfcCart');
-      if (savedCart) {
-        cart = JSON.parse(savedCart);
-        updateCart();
-      }
+      updateCart();
     }
 
     // Save cart to localStorage
     function saveCart() {
-      localStorage.setItem('kfcCart', JSON.stringify(cart));
+      localStorage.setItem('mcdonaldsCart', JSON.stringify(cart));
     }
 
     // Back button functionality
     backButton.addEventListener('click', () => {
-      // العودة إلى صفحة المطاعم الرئيسية
-      window.location.href = 'index.html';
-    });
-
-    // Search functionality
-    searchButton.addEventListener('click', () => {
-      searchContainer.classList.toggle('active');
-      if (searchContainer.classList.contains('active')) {
-        searchInput.focus();
-      }
-    });
-
-    // Real-time search filtering
-    searchInput.addEventListener('input', () => {
-      const searchText = searchInput.value.toLowerCase();
-      
-      items.forEach(item => {
-        const title = item.querySelector('.item-title').textContent.toLowerCase();
-        const desc = item.querySelector('.item-desc').textContent.toLowerCase();
-        
-        if (title.includes(searchText) || desc.includes(searchText)) {
-          item.style.display = 'flex';
-        } else {
-          item.style.display = 'none';
-        }
-      });
+      window.history.back();
     });
 
     // Share functionality
     shareButton.addEventListener('click', () => {
       if (navigator.share) {
         navigator.share({
-          title: 'KFC Menu',
-          text: 'Check out this delicious KFC menu!',
+          title: 'McDonald\'s Menu',
+          text: 'Check out this delicious McDonald\'s menu!',
           url: window.location.href
         })
         .then(() => console.log('Shared successfully'))
@@ -645,14 +1041,202 @@
       button.addEventListener('click', (e) => {
         const title = e.target.getAttribute('data-title');
         const price = parseFloat(e.target.getAttribute('data-price'));
+        const img = e.target.getAttribute('data-img');
         
-        // Add item to cart
-        addToCart(title, price);
-        
-        // Show fixed basket if it's the first item
-        if (cart.length === 1) {
-          fixedBasket.classList.add('active');
+        if (title === "Big Mac") {
+          // فتح الـ modal لتخصيص Big Mac
+          openModal();
+        } else {
+          // إضافة العناصر الأخرى مباشرة إلى السلة
+          addItemToCart({
+            name: title,
+            basePrice: price,
+            quantity: 1,
+            drink: "none",
+            remove: [],
+            extras: [],
+            totalPrice: price,
+            img: img
+          });
+          
+          // Show fixed basket if it's the first item
+          if (cart.length === 1) {
+            fixedBasket.classList.add('active');
+          }
+          
+          // Show basket summary
+          basketSummary.classList.add('active');
+          
+          // Hide basket summary after 3 seconds
+          setTimeout(() => {
+            if (cart.length > 0) {
+              basketSummary.classList.remove('active');
+            }
+          }, 3000);
         }
+      });
+    });
+
+    // فتح وإغلاق الـ Modal
+    function openModal() {
+      document.getElementById("overlay").style.display = "flex";
+      document.body.style.overflow = "hidden";
+      resetModal();
+    }
+    
+    function closeModal() {
+      document.getElementById("overlay").style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+    
+    // إعادة تعيين الـ Modal إلى الحالة الافتراضية
+    function resetModal() {
+      count = 1;
+      basePrice = 13.00;
+      currentItem = {
+        name: "Big Mac",
+        basePrice: basePrice,
+        quantity: 1,
+        drink: "sprite",
+        remove: [],
+        extras: [],
+        totalPrice: basePrice,
+        img: "https://shippini.ma/wp-content/uploads/2023/09/Menu-Big-Mac™.jpg"
+      };
+      
+      // تحديد القيم الافتراضية
+      document.querySelector('input[name="drink"][value="sprite"]').checked = true;
+      document.querySelectorAll('input[name="remove"]').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      document.querySelectorAll('input[name="extras"]').forEach(checkbox => {
+        checkbox.checked = false;
+      });
+      
+      updateCounter();
+    }
+    
+    // زيادة وتقليل الكمية
+    function increment() {
+      count++;
+      updateCounter();
+      document.querySelector('.counter-btn:nth-child(3)').classList.add('pulse');
+      setTimeout(() => {
+        document.querySelector('.counter-btn:nth-child(3)').classList.remove('pulse');
+      }, 500);
+    }
+    
+    function decrement() {
+      if (count > 1) {
+        count--;
+        updateCounter();
+        document.querySelector('.counter-btn:nth-child(1)').classList.add('pulse');
+        setTimeout(() => {
+          document.querySelector('.counter-btn:nth-child(1)').classList.remove('pulse');
+        }, 500);
+      }
+    }
+    
+    // تحديث العداد والسعر
+    function updateCounter() {
+      document.getElementById('counterValue').textContent = count;
+      calculateTotalPrice();
+    }
+    
+    // حساب السعر الإجمالي بناءً على الخيارات
+    function calculateTotalPrice() {
+      let total = basePrice;
+      
+      // إضافة سعر المشروب المحدد
+      const selectedDrink = document.querySelector('input[name="drink"]:checked');
+      if (selectedDrink) {
+        total += parseFloat(selectedDrink.getAttribute('data-price'));
+      }
+      
+      // إضافة أسعار الإضافات
+      document.querySelectorAll('input[name="extras"]:checked').forEach(extra => {
+        total += parseFloat(extra.getAttribute('data-price'));
+      });
+      
+      // ضرب في الكمية
+      total *= count;
+      
+      // تحديث السعر المعروض
+      document.getElementById('totalPrice').textContent = `${total.toFixed(2)} MAD`;
+      
+      // تحديث العنصر الحالي
+      currentItem.quantity = count;
+      currentItem.totalPrice = total;
+      
+      return total;
+    }
+    
+    // جمع كل الخيارات المحددة
+    function gatherSelections() {
+      // جمع المشروب المحدد
+      const drinkElement = document.querySelector('input[name="drink"]:checked');
+      currentItem.drink = drinkElement ? drinkElement.value : "sprite";
+      
+      // جمع المكونات المراد إزالتها
+      currentItem.remove = [];
+      document.querySelectorAll('input[name="remove"]:checked').forEach(checkbox => {
+        currentItem.remove.push(checkbox.value);
+      });
+      
+      // جمع الإضافات
+      currentItem.extras = [];
+      document.querySelectorAll('input[name="extras"]:checked').forEach(checkbox => {
+        currentItem.extras.push(checkbox.value);
+      });
+      
+      return currentItem;
+    }
+    
+    // إضافة عنصر إلى السلة
+    function addItemToCart(item) {
+      // البحث إذا كان العنصر موجودًا بالفعل بنفس الخيارات
+      const existingItemIndex = cart.findIndex(cartItem => 
+        cartItem.name === item.name &&
+        cartItem.drink === item.drink &&
+        JSON.stringify(cartItem.remove) === JSON.stringify(item.remove) &&
+        JSON.stringify(cartItem.extras) === JSON.stringify(item.extras)
+      );
+      
+      if (existingItemIndex !== -1) {
+        // إذا كان موجودًا، قم بزيادة الكمية فقط
+        cart[existingItemIndex].quantity += item.quantity;
+        cart[existingItemIndex].totalPrice += item.totalPrice;
+      } else {
+        // إذا لم يكن موجودًا، أضفه جديدًا
+        cart.push(item);
+      }
+      
+      // حفظ في localStorage
+      saveCart();
+      
+      // تحديث واجهة السلة
+      updateCart();
+      
+      // عرض رسالة النجاح
+      createStarsAnimation(itemCount);
+    }
+    
+    // إضافة إلى السلة من الـ Modal
+    function addToCart() {
+      const item = gatherSelections();
+      addItemToCart(item);
+      
+      // عرض رسالة النجاح
+      const addButton = document.querySelector('.modal-add-btn');
+      addButton.innerHTML = '<i class="fas fa-check"></i> Added to Cart!';
+      addButton.style.background = 'linear-gradient(135deg, #2ecc71 0%, #27ae60 100%)';
+      addButton.style.boxShadow = '0 4px 15px rgba(46, 204, 113, 0.3)';
+      
+      setTimeout(() => {
+        addButton.innerHTML = '<i class="fas fa-shopping-cart"></i> Add to Cart • <span class="price" id="totalPrice">13.00 MAD</span>';
+        addButton.style.background = 'linear-gradient(135deg, var(--primary-red) 0%, var(--primary-red-dark) 100%)';
+        addButton.style.boxShadow = '0 4px 15px rgba(139, 0, 0, 0.3)';
+        closeModal();
         
         // Show basket summary
         basketSummary.classList.add('active');
@@ -663,30 +1247,9 @@
             basketSummary.classList.remove('active');
           }
         }, 3000);
-      });
-    });
-
-    // Add item to cart function
-    function addToCart(title, price) {
-      // Check if item already exists in cart
-      const existingItem = cart.find(item => item.title === title);
-      
-      if (existingItem) {
-        existingItem.quantity += 1;
-        createStarsAnimation(itemCount);
-      } else {
-        cart.push({
-          title: title,
-          price: price,
-          quantity: 1
-        });
-      }
-      
-      // Update cart UI and save to localStorage
-      updateCart();
-      saveCart();
+      }, 1500);
     }
-
+    
     // Create stars animation
     function createStarsAnimation(element) {
       for (let i = 0; i < 5; i++) {
@@ -725,14 +1288,14 @@
       
       // Add items to basket
       cart.forEach(item => {
-        const itemTotal = item.price * item.quantity;
+        const itemTotal = item.totalPrice;
         total += itemTotal;
         count += item.quantity;
         
         const basketItem = document.createElement('div');
         basketItem.classList.add('basket-item');
         basketItem.innerHTML = `
-          <span>${item.title} x${item.quantity}</span>
+          <span>${item.name} x${item.quantity}</span>
           <span>${itemTotal.toFixed(2)} MAD</span>
         `;
         
@@ -777,13 +1340,25 @@
       }
       
       // حفظ السلة في localStorage
-      localStorage.setItem('kfcCart', JSON.stringify(cart));
+      localStorage.setItem('mcdonaldsCart', JSON.stringify(cart));
       
       // الانتقال إلى صفحة الدفع
       window.location.href = 'checkout.html';
     });
 
-    // Initialize the cart when the page loads
+    // إضافة مستمعين للأحداث لتحديث السعر عند تغيير الخيارات
+    document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(input => {
+      input.addEventListener('change', calculateTotalPrice);
+    });
+    
+    // إغلاق الـ Modal عند النقر خارج المحتوى
+    document.getElementById('overlay').addEventListener('click', function(e) {
+      if (e.target === document.getElementById('overlay')) {
+        closeModal();
+      }
+    });
+    
+    // تهيئة عدد العناصر في السلة عند تحميل الصفحة
     document.addEventListener('DOMContentLoaded', initCart);
   </script>
 </body>
