@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Checkout </title>
+  <title>Checkout</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -468,7 +468,7 @@
         <div class="cart-header">
           <h2 id="cart-count">Order Items (0)</h2>
           <button class="clear-cart" id="clear-cart">
-            <i class="fas fa-trash-alt"></i> Clear
+            <i class="fas fa-trash-alt"></i> Clear All
           </button>
         </div>
         
@@ -483,22 +483,22 @@
         
         <div class="summary-item">
           <span class="summary-label">Subtotal</span>
-          <span class="summary-value" id="subtotal">$0.00</span>
+          <span class="summary-value" id="subtotal">0.00 MAD</span>
         </div>
         
         <div class="summary-item">
           <span class="summary-label">Delivery Fee</span>
-          <span class="summary-value" id="delivery-fee">$3.99</span>
+          <span class="summary-value" id="delivery-fee">20.00 MAD</span>
         </div>
         
         <div class="summary-item">
-          <span class="summary-label">Tax (7.5%)</span>
-          <span class="summary-value" id="tax">$0.00</span>
+          <span class="summary-label">Tax (10%)</span>
+          <span class="summary-value" id="tax">0.00 MAD</span>
         </div>
         
         <div class="summary-total">
           <span class="total-label">Total</span>
-          <span class="total-price" id="total-price">$3.99</span>
+          <span class="total-price" id="total-price">20.00 MAD</span>
         </div>
         
         <!-- Payment Method -->
@@ -530,8 +530,8 @@
     let cart = [];
 
     // Constants
-    const DELIVERY_FEE = 3.99;
-    const TAX_RATE = 0.075; // 7.5%
+    const DELIVERY_FEE = 20.00;
+    const TAX_RATE = 0.10; // 10%
 
     // DOM elements
     const cartItemsContainer = document.getElementById('cart-items-container');
@@ -546,13 +546,13 @@
 
     // دالة للحصول على محتويات السلة من localStorage
     function getCart() {
-      const cartData = localStorage.getItem('kfcCart');
+      const cartData = localStorage.getItem('mcdonaldsCart');
       return cartData ? JSON.parse(cartData) : [];
     }
     
     // دالة لحفظ السلة في localStorage
     function saveCart() {
-      localStorage.setItem('kfcCart', JSON.stringify(cart));
+      localStorage.setItem('mcdonaldsCart', JSON.stringify(cart));
     }
     
     // Initialize the cart
@@ -578,18 +578,36 @@
         return;
       }
       
-      cart.forEach(item => {
+      cart.forEach((item, index) => {
         const itemElement = document.createElement('div');
         itemElement.className = 'item-card';
-        itemElement.setAttribute('data-id', item.title);
+        itemElement.setAttribute('data-id', index);
+        
+        // إنشاء وصف للخيارات المخصصة
+        let customizations = '';
+        if (item.drink && item.drink !== "none") {
+          customizations += `Drink: ${item.drink}, `;
+        }
+        if (item.remove && item.remove.length > 0) {
+          customizations += `Removed: ${item.remove.join(', ')}, `;
+        }
+        if (item.extras && item.extras.length > 0) {
+          customizations += `Extras: ${item.extras.join(', ')}, `;
+        }
+        
+        // إزالة الفاصلة الأخيرة إذا كانت موجودة
+        if (customizations.endsWith(', ')) {
+          customizations = customizations.slice(0, -2);
+        }
         
         itemElement.innerHTML = `
           <div class="item-image">
-            <img src="https://via.placeholder.com/70x70/eee/999?text=KFC" alt="${item.title}">
+            <img src="${item.img || 'https://via.placeholder.com/70x70/eee/999?text=McD'}" alt="${item.name}">
           </div>
           <div class="item-details">
-            <div class="item-name">${item.title}</div>
-            <div class="item-price">$${item.price.toFixed(2)}</div>
+            <div class="item-name">${item.name}</div>
+            ${customizations ? `<div class="item-desc">${customizations}</div>` : ''}
+            <div class="item-price">${item.totalPrice.toFixed(2)} MAD</div>
             <div class="item-controls">
               <button class="quantity-btn minus-btn"><i class="fas fa-minus"></i></button>
               <span class="item-quantity">${item.quantity}</span>
@@ -605,7 +623,7 @@
 
     // Calculate cart totals
     function calculateTotals() {
-      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const subtotal = cart.reduce((sum, item) => sum + (item.totalPrice), 0);
       const tax = subtotal * TAX_RATE;
       const total = subtotal + DELIVERY_FEE + tax;
       
@@ -622,10 +640,10 @@
       const totals = calculateTotals();
       
       // Update summary
-      subtotalElement.textContent = `$${totals.subtotal}`;
-      deliveryFeeElement.textContent = `$${totals.deliveryFee}`;
-      taxElement.textContent = `$${totals.tax}`;
-      totalPriceElement.textContent = `$${totals.total}`;
+      subtotalElement.textContent = `${totals.subtotal} MAD`;
+      deliveryFeeElement.textContent = `${totals.deliveryFee} MAD`;
+      taxElement.textContent = `${totals.tax} MAD`;
+      totalPriceElement.textContent = `${totals.total} MAD`;
       
       // Update cart count
       const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
@@ -633,17 +651,17 @@
     }
 
     // Update item quantity
-    function updateQuantity(itemTitle, change) {
-      const item = cart.find(item => item.title === itemTitle);
-      if (item) {
-        item.quantity += change;
+    function updateQuantity(itemIndex, change) {
+      if (cart[itemIndex]) {
+        cart[itemIndex].quantity += change;
+        
+        // تحديث السعر الإجمالي بناء على الكمية
+        const pricePerUnit = cart[itemIndex].totalPrice / cart[itemIndex].quantity;
+        cart[itemIndex].totalPrice = pricePerUnit * cart[itemIndex].quantity;
         
         // Remove item if quantity is 0
-        if (item.quantity <= 0) {
-          const itemIndex = cart.findIndex(i => i.title === itemTitle);
-          if (itemIndex !== -1) {
-            cart.splice(itemIndex, 1);
-          }
+        if (cart[itemIndex].quantity <= 0) {
+          cart.splice(itemIndex, 1);
         }
         
         saveCart();
@@ -653,9 +671,8 @@
     }
 
     // Remove item from cart
-    function removeItem(itemTitle) {
-      const itemIndex = cart.findIndex(item => item.title === itemTitle);
-      if (itemIndex !== -1) {
+    function removeItem(itemIndex) {
+      if (itemIndex >= 0 && itemIndex < cart.length) {
         cart.splice(itemIndex, 1);
         saveCart();
         renderCartItems();
@@ -672,6 +689,9 @@
         saveCart();
         renderCartItems();
         updateCartDisplay();
+        
+        // إظهار رسالة تأكيد
+        alert("Your cart has been cleared successfully.");
       }
     }
 
@@ -683,7 +703,7 @@
       }
       
       const totals = calculateTotals();
-      const message = `Hello! I would like to place an order:%0A%0A${generateOrderText()}%0A%0ASubtotal: $${totals.subtotal}%0ADelivery: $${totals.deliveryFee}%0ATax: $${totals.tax}%0A%0ATotal: $${totals.total}%0A%0APlease confirm the total amount including delivery charges.`;
+      const message = `Hello! I would like to place an order:%0A%0A${generateOrderText()}%0A%0ASubtotal: ${totals.subtotal} MAD%0ADelivery: ${totals.deliveryFee} MAD%0ATax: ${totals.tax} MAD%0A%0ATotal: ${totals.total} MAD%0A%0APlease confirm the total amount including delivery charges.`;
       
       // Open WhatsApp with the order message
       window.open(`https://wa.me/?text=${message}`, '_blank');
@@ -692,11 +712,11 @@
     // Generate order text for WhatsApp
     function generateOrderText() {
       return cart.map(item => 
-        `${item.quantity}x ${item.title} - $${(item.price * item.quantity).toFixed(2)}`
+        `${item.quantity}x ${item.name} - ${item.totalPrice.toFixed(2)} MAD${item.drink && item.drink !== "none" ? ` (${item.drink})` : ''}${item.remove && item.remove.length > 0 ? ` [Remove: ${item.remove.join(', ')}]` : ''}${item.extras && item.extras.length > 0 ? ` [Extras: ${item.extras.join(', ')}]` : ''}`
       ).join("%0A");
     }
 
-    // Handle back button click - تمت إضافة هذه الدالة
+    // Handle back button click
     function handleBackButton() {
       // استخدام history.back() للعودة إلى الصفحة السابقة
       window.history.back();
@@ -710,7 +730,7 @@
       // Checkout button
       checkoutBtn.addEventListener('click', handleCheckout);
       
-      // Back button - تمت إضافة المستمع لهذا الحدث
+      // Back button
       backButton.addEventListener('click', handleBackButton);
       
       // Use event delegation for dynamic elements
@@ -718,14 +738,14 @@
         const itemCard = e.target.closest('.item-card');
         if (!itemCard) return;
         
-        const itemTitle = itemCard.getAttribute('data-id');
+        const itemIndex = parseInt(itemCard.getAttribute('data-id'));
         
         if (e.target.closest('.plus-btn')) {
-          updateQuantity(itemTitle, 1);
+          updateQuantity(itemIndex, 1);
         } else if (e.target.closest('.minus-btn')) {
-          updateQuantity(itemTitle, -1);
+          updateQuantity(itemIndex, -1);
         } else if (e.target.closest('.remove-item')) {
-          removeItem(itemTitle);
+          removeItem(itemIndex);
         }
       });
     }
