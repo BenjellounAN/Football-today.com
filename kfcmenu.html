@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>McDonald's - Big Mac</title>
+  <title>McDonald's - Menu</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -109,9 +109,12 @@
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
-      border-bottom: 1px solid #eee;
-      padding: 15px 0;
+      padding: 20px 0;
       animation: fadeIn 0.5s;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .item:last-child {
+      border-bottom: none;
     }
     .item-text {
       flex: 1;
@@ -126,6 +129,7 @@
       font-size: 13px;
       color: #555;
       margin-bottom: 6px;
+      line-height: 1.4;
     }
     .item-calories {
       font-size: 12px;
@@ -298,19 +302,6 @@
       margin-top: 10px;
       padding-top: 10px;
       border-top: 1px solid #eee;
-    }
-
-    /* Checkout Button */
-    .checkout-btn {
-      width: 100%;
-      background: darkgreen;
-      color: white;
-      border: none;
-      padding: 12px;
-      border-radius: 8px;
-      margin-top: 15px;
-      cursor: pointer;
-      font-weight: bold;
     }
 
     /* Overlay */
@@ -765,10 +756,6 @@
       <span>Total:</span>
       <span id="basketTotal">0.00 MAD</span>
     </div>
-    <!-- إضافة زر الدفع -->
-    <button id="checkoutButton" class="checkout-btn">
-      Proceed to Checkout
-    </button>
   </div>
 
   <!-- Overlay & Modal -->
@@ -977,7 +964,6 @@
     const basketItems = document.getElementById('basketItems');
     const basketTotal = document.getElementById('basketTotal');
     const viewBasketBtn = document.getElementById('viewBasketBtn');
-    const checkoutButton = document.getElementById('checkoutButton');
 
     // Shopping cart
     let cart = JSON.parse(localStorage.getItem('mcdonaldsCart')) || [];
@@ -1322,7 +1308,16 @@
 
     // Toggle basket summary when clicking the fixed basket
     viewBasketBtn.addEventListener('click', () => {
-      basketSummary.classList.toggle('active');
+      // عند النقر على View Basket، الانتقال مباشرة إلى صفحة checkout
+      if (cart.length === 0) {
+        basketSummary.classList.toggle('active');
+      } else {
+        // حفظ السلة في localStorage
+        saveCart();
+        
+        // الانتقال إلى صفحة الدفع
+        window.location.href = 'checkout.html';
+      }
     });
 
     // Close basket summary when clicking outside
@@ -1330,20 +1325,6 @@
       if (!e.target.closest('.basket-summary') && !e.target.closest('.fixed-basket')) {
         basketSummary.classList.remove('active');
       }
-    });
-
-    // Checkout button functionality
-    checkoutButton.addEventListener('click', () => {
-      if (cart.length === 0) {
-        alert('Your basket is empty. Please add items before proceeding to checkout.');
-        return;
-      }
-      
-      // حفظ السلة في localStorage
-      localStorage.setItem('mcdonaldsCart', JSON.stringify(cart));
-      
-      // الانتقال إلى صفحة الدفع
-      window.location.href = 'checkout.html';
     });
 
     // إضافة مستمعين للأحداث لتحديث السعر عند تغيير الخيارات
@@ -1360,6 +1341,14 @@
     
     // تهيئة عدد العناصر في السلة عند تحميل الصفحة
     document.addEventListener('DOMContentLoaded', initCart);
+
+    // تحديث السلة عند العودة إلى الصفحة
+    window.addEventListener('pageshow', function(event) {
+      // إذا كانت الصفحة تم تحميلها من cache (مثل عند الضغط على زر الرجوع)
+      if (event.persisted) {
+        initCart();
+      }
+    });
   </script>
 </body>
 </html>
