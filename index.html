@@ -51,10 +51,12 @@
 
     /* Fixed header */
     .fixed-header {
-      background: var(--bg);
+      background: #FFFFFF; /* Changed to white */
       z-index: 1000;
       padding:0 12px 8px 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      position: sticky;
+      top: 0;
     }
 
     /* Header with location and icons */
@@ -176,6 +178,52 @@
     .search .filter i{
       color:white;
       font-size:18px;
+    }
+
+    /* Categories section */
+    .categories {
+      padding: 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      display: flex;
+      gap: 16px;
+      margin-bottom: 10px;
+    }
+    
+    .categories::-webkit-scrollbar {
+      display: none;
+    }
+    
+    .category-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      min-width: 70px;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    .category-item:hover {
+      transform: translateY(-3px);
+    }
+    
+    .category-icon {
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
+    }
+    
+    .category-name {
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      text-align: center;
     }
 
     /* Section header */
@@ -347,7 +395,16 @@
       padding:14px 0;
       box-shadow:0 -4px 12px rgba(0,0,0,0.06);
       z-index:1000;
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      transition: transform 0.3s ease;
     }
+    
+    .bottom-nav.hidden {
+      transform: translateY(100%);
+    }
+    
     .nav-inner{
       background:var(--card);
       border-radius:24px;
@@ -542,25 +599,6 @@
       transform: translateY(-2px);
       box-shadow: var(--shadow);
     }
-
-    /* Add to cart button */
-    .add-to-cart {
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: var(--radius);
-      padding: 10px 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      margin-top: 12px;
-      width: 100%;
-    }
-    
-    .add-to-cart:hover {
-      background: var(--primary-dark);
-      transform: translateY(-2px);
-    }
   </style>
 </head>
 <body>
@@ -581,7 +619,7 @@
     </div>
 
     <!-- Fixed header section -->
-    <div class="fixed-header">
+    <div class="fixed-header" id="fixedHeader">
       <!-- Header -->
       <header class="header">
         <div class="location">
@@ -613,7 +651,35 @@
     </div>
 
     <!-- Main content with scrolling -->
-    <div style="overflow-y: auto; flex: 1;">
+    <div style="overflow-y: auto; flex: 1; padding-top: 10px;" id="mainContent">
+      <!-- Categories section -->
+      <div class="categories">
+        <div class="category-item" data-category="pizza">
+          <div class="category-icon" style="background-image: url('https://png.pngtree.com/png-clipart/20231020/original/pngtree-illustration-of-burger-cartoon-png-image_13373633.png')"></div>
+          <div class="category-name">Pizza</div>
+        </div>
+        <div class="category-item" data-category="burgers">
+          <div class="category-icon" style="background-image: url('https://png.pngtree.com/png-clipart/20231020/original/pngtree-illustration-of-burger-cartoon-png-image_13373633.png')"></div>
+          <div class="category-name">Burgers</div>
+        </div>
+        <div class="category-item" data-category="sushi">
+          <div class="category-icon" style="background-image: url('https://png.pngtree.com/png-clipart/20231020/original/pngtree-illustration-of-burger-cartoon-png-image_13373633.png')"></div>
+          <div class="category-name">Sushi</div>
+        </div>
+        <div class="category-item" data-category="pasta">
+          <div class="category-icon" style="background-image: url('https://png.pngtree.com/png-clipart/20231020/original/pngtree-illustration-of-burger-cartoon-png-image_13373633.png')"></div>
+          <div class="category-name">Pasta</div>
+        </div>
+        <div class="category-item" data-category="healthy">
+          <div class="category-icon" style="background-image: url('https://png.pngtree.com/png-clipart/20231020/original/pngtree-illustration-of-burger-cartoon-png-image_13373633.png')"></div>
+          <div class="category-name">Healthy</div>
+        </div>
+        <div class="category-item" data-category="desserts">
+          <div class="category-icon" style="background-image: url('https://png.pngtree.com/png-clipart/20231020/original/pngtree-illustration-of-burger-cartoon-png-image_13373633.png')"></div>
+          <div class="category-name">Desserts</div>
+        </div>
+      </div>
+
       <!-- Meal Deals Section -->
       <section class="section">
         <h3>Featured Restaurants</h3>
@@ -623,9 +689,9 @@
       <div class="carousel" aria-label="featured restaurants carousel">
 
         <!-- Card 1 - McDonald's -->
-        <article class="card" id="mcdonaldsCard">
+        <article class="card" data-link="menukfc.html">
           <div class="media">
-            <img src="https://images.unsplash.com/photo-1610878180933-123728745d22?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="McDonald's restaurant" />
+            <img src="https://www.livraisonplus.ma/web/image/527-0c1fabaa/1000036792.jpg" alt="McDonald's restaurant" />
             <div class="badge-top">Popular</div>
             <div class="time-pill"><i class="fa-solid fa-clock"></i> 10 min</div>
           </div>
@@ -640,19 +706,18 @@
               <span class="tag">Fries</span>
               <span class="tag">$</span>
             </div>
-            <button class="add-to-cart" data-restaurant="McDonald's">Add to Cart</button>
           </div>
         </article>
 
         <!-- Card 2 -->
-        <article class="card">
+        <article class="card" data-link="pizzahutmenu.html">
           <div class="media">
-            <img src="https://images.unsplash.com/photo-1513104890138-7c749659a591?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Pizza restaurant" />
+            <img src="https://www.yum.com/wps/wcm/connect/yumbrands/77ac5d27-1357-4792-9953-54b11f5ae7dd/yum-com-24-product-PH.jpg?MOD=AJPERES&CACHEID=ROOTWORKSPACE.Z18_5QC4HBC039RJ406SQH4UBH3695-77ac5d27-1357-4792-9953-54b11f5ae7dd-oXSxcXb" alt="Pizza restaurant" />
             <div class="badge-top">New</div>
             <div class="time-pill"><i class="fa-solid fa-clock"></i> 15 min</div>
           </div>
           <div class="info">
-            <div class="title">Tony's Pizza</div>
+            <div class="title"> Pizza hut</div>
             <div class="meta">
               <span class="star"><i class="fa-solid fa-star"></i> 4.8</span>
               <span>• Italian • Pizza</span>
@@ -662,12 +727,11 @@
               <span class="tag">Pasta</span>
               <span class="tag">$$</span>
             </div>
-            <button class="add-to-cart" data-restaurant="Tony's Pizza">Add to Cart</button>
           </div>
         </article>
 
         <!-- Card 3 -->
-        <article class="card">
+        <article class="card" data-link="tokyosushi.html">
           <div class="media">
             <img src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Sushi restaurant" />
             <div class="badge-top accent">Deal</div>
@@ -684,7 +748,6 @@
               <span class="tag">Ramen</span>
               <span class="tag">$$$</span>
             </div>
-            <button class="add-to-cart" data-restaurant="Tokyo Sushi">Add to Cart</button>
           </div>
         </article>
 
@@ -699,7 +762,7 @@
       <!-- Second carousel -->
       <div class="carousel" aria-label="specials carousel">
 
-        <article class="card">
+        <article class="card" data-link="gourmetburger.html">
           <div class="media">
             <img src="https://images.unsplash.com/photo-1551782450-a2132b4ba21d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Burger meal" />
             <div class="badge-top">Limited</div>
@@ -715,11 +778,10 @@
               <span class="tag">Combo</span>
               <span class="tag">Family Meal</span>
             </div>
-            <button class="add-to-cart" data-restaurant="Gourmet Burger">Add to Cart</button>
           </div>
         </article>
 
-        <article class="card">
+        <article class="card" data-link="pastaparadise.html">
           <div class="media">
             <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Pasta dish" />
             <div class="badge-top accent">-20%</div>
@@ -735,11 +797,10 @@
               <span class="tag">Pasta</span>
               <span class="tag">Garlic Bread</span>
             </div>
-            <button class="add-to-cart" data-restaurant="Pasta Paradise">Add to Cart</button>
           </div>
         </article>
 
-        <article class="card">
+        <article class="card" data-link="greengarden.html">
           <div class="media">
             <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Salad bowl" />
             <div class="badge-top">Healthy</div>
@@ -755,7 +816,6 @@
               <span class="tag">Vegan</span>
               <span class="tag">Gluten-Free</span>
             </div>
-            <button class="add-to-cart" data-restaurant="Green Garden">Add to Cart</button>
           </div>
         </article>
 
@@ -763,7 +823,7 @@
     </div>
 
     <!-- Bottom navigation -->
-    <nav class="bottom-nav" aria-label="Main navigation">
+    <nav class="bottom-nav" aria-label="Main navigation" id="bottomNav">
       <div class="nav-inner">
         <button class="nav-item active">
           <div class="icon"><i class="fa-solid fa-house"></i></div>
@@ -790,6 +850,11 @@
     // Card interaction
     document.querySelectorAll('.card').forEach(card => {
       card.addEventListener('click', () => {
+        const link = card.getAttribute('data-link');
+        if (link) {
+          window.location.href = link;
+        }
+        
         card.style.transform = 'translateY(-6px)';
         card.style.transition = 'transform 180ms ease';
         setTimeout(()=> card.style.transform = '',260);
@@ -981,11 +1046,6 @@
       }
     }
 
-    // McDonald's redirect functionality
-    document.getElementById('mcdonaldsCard').addEventListener('click', function() {
-      window.location.href = 'kfcmenu.html';
-    });
-
     // Cart redirection functionality
     document.getElementById('cartIcon').addEventListener('click', function() {
       window.location.href = 'checkout.html';
@@ -1012,35 +1072,28 @@
       }
     }
     
-    // Add to cart functionality
-    document.querySelectorAll('.add-to-cart').forEach(button => {
-      button.addEventListener('click', function(e) {
-        e.stopPropagation(); // Prevent card click event
-        
-        const restaurant = this.getAttribute('data-restaurant');
-        let cartItems = JSON.parse(localStorage.getItem('cartItems') || '[]');
-        
-        // Add item to cart
-        cartItems.push({
-          id: Date.now(),
-          restaurant: restaurant,
-          addedAt: new Date().toISOString()
-        });
-        
-        // Save to localStorage
-        localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        
-        // Update cart indicator
-        updateCartIndicator();
-        
-        // Show success message
-        showToast(`تمت إضافة ${restaurant} إلى السلة`);
-      });
-    });
-    
     // Initialize cart indicator on page load
     window.addEventListener('load', function() {
       updateCartIndicator();
+    });
+    
+    // Hide/show bottom navbar on scroll
+    const bottomNav = document.getElementById('bottomNav');
+    const mainContent = document.getElementById('mainContent');
+    let lastScrollTop = 0;
+    
+    mainContent.addEventListener('scroll', function() {
+      let scrollTop = this.scrollTop;
+      
+      if (scrollTop > lastScrollTop && scrollTop > 100) {
+        // Scrolling down - hide navbar
+        bottomNav.classList.add('hidden');
+      } else {
+        // Scrolling up - show navbar
+        bottomNav.classList.remove('hidden');
+      }
+      
+      lastScrollTop = scrollTop;
     });
   </script>
 </body>
