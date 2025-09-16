@@ -986,20 +986,111 @@
           from { transform: translateX(-50%) translateY(20px); opacity: 0; }
           to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
+
+        /* Search Modal Styles */
+        .search-modal {
+            background: white;
+            width: 100%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow: hidden;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+            display: flex;
+            flex-direction: column;
+            animation: modalAppear 0.4s ease forwards;
+        }
+        
+        .search-header {
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #ECF0F1;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            z-index: 100;
+        }
+        
+        .search-input-container {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            background: #F9F9F9;
+            border-radius: 25px;
+            padding: 10px 15px;
+            margin-right: 10px;
+        }
+        
+        .search-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            font-size: 16px;
+            outline: none;
+        }
+        
+        .search-results {
+            padding: 15px;
+            overflow-y: auto;
+            flex-grow: 1;
+        }
+        
+        .search-result-item {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #ECF0F1;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background-color: #F9F9F9;
+        }
+        
+        .search-result-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-right: 15px;
+        }
+        
+        .search-result-info {
+            flex: 1;
+        }
+        
+        .search-result-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .search-result-price {
+            color: #8B0000;
+            font-weight: 700;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 20px;
+            color: #7F8C8D;
+        }
     </style>
 </head>
 <body>
     <!-- Top Navigation Bar -->
     <nav class="navbar" id="navbar">
-        <button class="nav-btn">
+        <button class="nav-btn" id="backButton">
             <i class="fas fa-arrow-left"></i>
         </button>
         <div class="nav-title">McDonald's</div>
         <div style="display: flex; gap: 12px;">
-            <button class="nav-btn">
+            <button class="nav-btn" id="searchButton">
                 <i class="fas fa-search"></i>
             </button>
-            <button class="nav-btn">
+            <button class="nav-btn" id="shareButton">
                 <i class="fas fa-share-alt"></i>
             </button>
         </div>
@@ -1654,6 +1745,24 @@
         </div>
     </div>
 
+    <!-- Search Modal -->
+    <div class="overlay" id="searchOverlay" style="display: none;">
+        <div class="search-modal">
+            <div class="search-header">
+                <div class="search-input-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search for items...">
+                </div>
+                <div class="close-btn" id="closeSearchBtn">
+                    <i class="fas fa-times"></i>
+                </div>
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="no-results">Type to search for items</div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // البيانات الأساسية
         let count = 1;
@@ -1677,6 +1786,9 @@
         
         // عناصر DOM
         const navbar = document.getElementById('navbar');
+        const backButton = document.getElementById('backButton');
+        const searchButton = document.getElementById('searchButton');
+        const shareButton = document.getElementById('shareButton');
         const addButtons = document.querySelectorAll('.add-btn, .item-add-btn');
         const viewCartBtn = document.getElementById('viewCartBtn');
         const cartItemCount = document.getElementById('cartItemCount');
@@ -1692,6 +1804,12 @@
         const counterValue = document.getElementById('counterValue');
         const totalPriceElement = document.getElementById('totalPrice');
         const modalAddBtn = document.getElementById('modalAddBtn');
+        
+        // عناصر البحث
+        const searchOverlay = document.getElementById('searchOverlay');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const closeSearchBtn = document.getElementById('closeSearchBtn');
         
         // Initialize the cart from localStorage if available
         function initCart() {
@@ -1711,6 +1829,114 @@
                 navbar.classList.remove('scrolled');
             }
         });
+        
+        // زر الرجوع للخلف
+        backButton.addEventListener('click', function() {
+            window.history.back();
+        });
+        
+        // زر المشاركة
+        shareButton.addEventListener('click', function() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'McDonald\'s',
+                    text: 'Check out McDonald\'s menu and order online!',
+                    url: window.location.href
+                })
+                .catch(error => {
+                    console.log('Error sharing:', error);
+                    copyToClipboard(window.location.href);
+                    alert('Link copied to clipboard!');
+                });
+            } else {
+                copyToClipboard(window.location.href);
+                alert('Link copied to clipboard!');
+            }
+        });
+        
+        // دالة نسخ النص إلى الحافظة
+        function copyToClipboard(text) {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            document.body.appendChild(textarea);
+            textarea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+        }
+        
+        // فتح نافذة البحث
+        searchButton.addEventListener('click', function() {
+            searchOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            searchInput.focus();
+        });
+        
+        // إغلاق نافذة البحث
+        closeSearchBtn.addEventListener('click', function() {
+            searchOverlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        });
+        
+        // البحث عند الكتابة
+        searchInput.addEventListener('input', function() {
+            performSearch(this.value);
+        });
+        
+        // إغلاق البحث عند النقر خارجها
+        searchOverlay.addEventListener('click', function(e) {
+            if (e.target === searchOverlay) {
+                searchOverlay.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // وظيفة البحث
+        function performSearch(query) {
+            if (query.length < 2) {
+                searchResults.innerHTML = '<div class="no-results">Type at least 2 characters to search</div>';
+                return;
+            }
+            
+            // جمع جميع العناصر القابلة للبحث
+            const allItems = document.querySelectorAll('.product-card, .category-item');
+            const results = [];
+            
+            allItems.forEach(item => {
+                const nameElement = item.querySelector('.product-name, .item-name');
+                if (nameElement) {
+                    const name = nameElement.textContent.toLowerCase();
+                    if (name.includes(query.toLowerCase())) {
+                        results.push(item.cloneNode(true));
+                    }
+                }
+            });
+            
+            // عرض النتائج
+            if (results.length > 0) {
+                searchResults.innerHTML = '';
+                results.forEach(result => {
+                    // جعل العنصر قابل للنقر
+                    result.style.cursor = 'pointer';
+                    result.addEventListener('click', function() {
+                        const addButton = this.querySelector('.add-btn, .item-add-btn');
+                        if (addButton) {
+                            const name = addButton.getAttribute('data-name');
+                            const price = parseFloat(addButton.getAttribute('data-price'));
+                            const img = addButton.getAttribute('data-img');
+                            const calories = addButton.getAttribute('data-calories');
+                            const description = addButton.getAttribute('data-description');
+                            
+                            openModal(name, price, img, calories, description);
+                            searchOverlay.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                        }
+                    });
+                    searchResults.appendChild(result);
+                });
+            } else {
+                searchResults.innerHTML = '<div class="no-results">No results found for "' + query + '"</div>';
+            }
+        }
         
         // Add to cart animation
         addButtons.forEach(button => {
@@ -1850,9 +2076,9 @@
                 }
             });
             
-            // View cart button
+            // View cart button - التوجيه إلى checkout.html
             viewCartBtn.addEventListener('click', function() {
-                alert(`You have ${cart.length} items in your cart. Total: ${calculateCartTotal().toFixed(2)} MAD`);
+                window.location.href = 'checkout.html';
             });
         });
         
@@ -1950,7 +2176,7 @@
             // ضرب في الكمية
             total *= count;
             
-            // تحديث السعر المعروض
+            // تحديث السعر معروض
             totalPriceElement.textContent = `${total.toFixed(2)} MAD`;
             
             // تحديث العنصر الحالي
