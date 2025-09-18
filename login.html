@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Delivery Marrakech - Sign Up</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+  <style>
+    :root {
+      --primary-color: #8B0000;
+      --primary-light: #ff5252;
+      --secondary-color: #330000;
+      --dark-color: #000000;
+      --light-color: #ffffff;
+      --gray-light: #f8f9fa;
+      --gray: #e9ecef;
+      --gray-dark: #6c757d;
+      --text-color: #333333;
+      --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      --shadow-dark: 0 15px 35px rgba(0, 0, 0, 0.2);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 50%, var(--dark-color) 100%);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: white;
+      color: var(--text-color);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* زر الرجوع الجديد */
+    .back-button {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+    }
+
+    .back-button a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background-color: white;
+      border-radius: 50%;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .back-button a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .back-button i {
+      color: #8B0000;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* الخلفية المائلة المتدلية */
+    .background-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
+      background: linear-gradient(135deg, #8B0000 0%, #660000 30%, #330000 70%, #000000 100%);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+      z-index: -1;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      padding: 40px;
+      position: relative;
+      margin-top: 30px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo img {
+      max-width: 180px;
+    }
+
+    h2 {
+      text-align: center;
+      color: var(--primary-color);
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: var(--gray-dark);
+      margin-bottom: 30px;
+      font-size: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: #555;
+    }
+
+    .input-with-icon {
+      position: relative;
+    }
+
+    .input-with-icon i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-dark);
+    }
+
+    .input-with-icon input {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border: 2px solid var(--gray);
+      border-radius: 10px;
+      font-size: 16px;
+      transition: var(--transition);
+    }
+
+    .input-with-icon input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(139, 0, 0, 0.1);
+    }
+
+    .phone-input-container {
+      margin-top: 5px;
+    }
+
+    .iti {
+      width: 100%;
+    }
+
+    .phone-input {
+      width: 100%;
+      padding: 15px 15px 15px 60px;
+      border: 2px solid var(--gray);
+      border-radius: 10px;
+      font-size: 16px;
+    }
+
+    .verification-inputs {
+      display: flex;
+      justify-content: space-between;
+      margin: 20px 0;
+    }
+
+    .verification-input {
+      width: 50px;
+      height: 60px;
+      text-align: center;
+      font-size: 24px;
+      border: 2px solid var(--gray);
+      border-radius: 10px;
+      transition: var(--transition);
+    }
+
+    .verification-input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(139, 0, 0, 0.1);
+    }
+
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: 10px;
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(139, 0, 0, 0.3);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: #f1f1f1;
+      color: #333;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e5e5;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .resend-container {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .resend-text {
+      color: var(--gray-dark);
+      margin-bottom: 10px;
+    }
+
+    .countdown {
+      font-weight: 600;
+      color: var(--primary-color);
+    }
+
+    .step {
+      display: none;
+    }
+
+    .step.active {
+      display: block;
+      animation: fadeIn 0.5s ease;
+    }
+
+    .welcome-message {
+      text-align: center;
+      padding: 20px 0;
+    }
+
+    .welcome-icon {
+      font-size: 80px;
+      margin-bottom: 20px;
+      animation: celebrate 1s ease;
+    }
+
+    .user-name {
+      color: var(--primary-color);
+      font-weight: 700;
+    }
+
+    .simulated-notification {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: var(--shadow-dark);
+      padding: 15px;
+      display: flex;
+      align-items: center;
+      max-width: 350px;
+      z-index: 1000;
+      transform: translateX(400px);
+      transition: transform 0.5s ease;
+    }
+
+    .simulated-notification.visible {
+      transform: translateX(0);
+    }
+
+    .notification-icon {
+      font-size: 24px;
+      margin-right: 15px;
+      color: #25D366;
+    }
+
+    .notification-content h4 {
+      margin-bottom: 5px;
+      color: var(--primary-color);
+    }
+
+    .notification-close {
+      margin-left: 15px;
+      cursor: pointer;
+      color: var(--gray-dark);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes celebrate {
+      0% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+
+    .error-message {
+      color: #e74c3c;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    @media (max-width: 576px) {
+      .container {
+        padding: 25px;
+      }
+
+      .back-button {
+        top: 15px;
+        left: 15px;
+      }
+
+      .back-button a {
+        width: 45px;
+        height: 45px;
+      }
+
+      .background-overlay {
+        height: 180px;
+      }
+
+      .verification-inputs {
+        justify-content: space-around;
+      }
+
+      .verification-input {
+        width: 40px;
+        height: 50px;
+        font-size: 20px;
+      }
+
+      .simulated-notification {
+        left: 20px;
+        right: 20px;
+        max-width: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- زر الرجوع -->
+  <div class="back-button">
+    <a href="#" onclick="history.back()">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+  </div>
+
+  <!-- الخلفية المائلة المتدلية -->
+  <div class="background-overlay"></div>
+
+  <div class="container">
+    <div class="logo">
+      <img src="https://i.postimg.cc/v802j8YD/Logo-of-benjelloun-express-1.jpg" alt="Delivery Marrakech">
+    </div>
+
+    <!-- Step 1: Registration Form -->
+    <div class="step active" id="step1">
+      <h2>Create Your Account</h2>
+      <p class="subtitle">Join our delivery community today</p>
+
+      <form id="registrationForm">
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <div class="input-with-icon">
+            <i class="fas fa-user"></i>
+            <input type="text" id="fullName" placeholder="Enter your full name" required>
+          </div>
+          <div class="error-message" id="nameError">Please enter your full name</div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-with-icon">
+            <i class="fas fa-envelope"></i>
+            <input type="email" id="email" placeholder="Enter your email address" required>
+          </div>
+          <div class="error-message" id="emailError">Please enter a valid email address</div>
+        </div>
+
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <div class="phone-input-container">
+            <input type="tel" id="phone" class="phone-input" placeholder="Enter your phone number" required>
+          </div>
+          <div class="error-message" id="phoneError">Please enter a valid phone number</div>
+        </div>
+
+        <button type="submit" class="btn" id="sendCodeBtn">Send Verification Code</button>
+      </form>
+    </div>
+
+    <!-- Step 2: Verification Form -->
+    <div class="step" id="step2">
+      <h2>Verify Your Account</h2>
+      <p class="subtitle">We've sent a verification code to your phone</p>
+
+      <form id="verificationForm">
+        <div class="verification-inputs">
+          <input type="text" class="verification-input" maxlength="1" required>
+          <input type="text" class="verification-input" maxlength="1" required>
+          <input type="text" class="verification-input" maxlength="1" required>
+          <input type="text" class="verification-input" maxlength="1" required>
+          <input type="text" class="verification-input" maxlength="1" required>
+          <input type="text" class="verification-input" maxlength="1" required>
+        </div>
+
+        <div class="error-message" id="codeError">Verification code is incorrect</div>
+
+        <button type="submit" class="btn" id="verifyBtn">Verify & Create Account</button>
+
+        <div class="resend-container">
+          <p class="resend-text">Didn't receive the code? <span class="countdown" id="countdown">60</span>s</p>
+          <button type="button" class="btn btn-secondary" id="resendBtn" disabled>Resend Code</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Step 3: Welcome Message -->
+    <div class="step" id="step3">
+      <div class="welcome-message">
+        <div class="welcome-icon">🎉</div>
+        <h2>Welcome, <span class="user-name" id="userName"></span>!</h2>
+        <p>Your account has been successfully created! 🚀<br>Get ready to enjoy our delivery services. 🍕📦</p>
+        <p>You're all set to explore delicious food and quick delivery! 🏍️</p>
+
+        <button class="btn" id="startExploringBtn">Start Exploring</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Simulated SMS Notification -->
+  <div class="simulated-notification" id="smsNotification">
+    <div class="notification-icon">
+      <i class="fab fa-whatsapp"></i>
+    </div>
+    <div class="notification-content">
+      <h4>Delivery Marrakech Verification</h4>
+      <p>Your verification code is: <strong id="verificationCodeDisplay"></strong></p>
+    </div>
+    <div class="notification-close" id="closeNotification">
+      <i class="fas fa-times"></i>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const step3 = document.getElementById('step3');
+      const registrationForm = document.getElementById('registrationForm');
+      const verificationForm = document.getElementById('verificationForm');
+      const phoneInput = document.querySelector("#phone");
+      const verificationInputs = document.querySelectorAll('.verification-input');
+      const smsNotification = document.getElementById('smsNotification');
+      const verificationCodeDisplay = document.getElementById('verificationCodeDisplay');
+      const closeNotification = document.getElementById('closeNotification');
+      const userNameSpan = document.getElementById('userName');
+      const countdownEl = document.getElementById('countdown');
+      const resendBtn = document.getElementById('resendBtn');
+      const startExploringBtn = document.getElementById('startExploringBtn');
+      // Error messages
+      const nameError = document.getElementById('nameError');
+      const emailError = document.getElementById('emailError');
+      const phoneError = document.getElementById('phoneError');
+      const codeError = document.getElementById('codeError');
+      // Initialize phone input
+      const iti = window.intlTelInput(phoneInput, {
+        initialCountry: "ma",
+        separateDialCode: true,
+        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js",
+      });
+      // Generated verification code
+      let verificationCode = '';
+      let countdown;
+      let userData = {};
+      // Show step function
+      function showStep(stepNumber) {
+        document.querySelectorAll('.step').forEach(step => {
+          step.classList.remove('active');
+        });
+        document.getElementById('step' + stepNumber).classList.add('active');
+      }
+      // Generate random verification code
+      function generateVerificationCode() {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+      }
+      // Show simulated SMS notification
+      function showSmsNotification() {
+        verificationCode = generateVerificationCode();
+        verificationCodeDisplay.textContent = verificationCode;
+        setTimeout(() => {
+          smsNotification.classList.add('visible');
+        }, 1000);
+      }
+      // Start countdown timer
+      function startCountdown() {
+        let timeLeft = 60;
+        countdownEl.textContent = timeLeft;
+        resendBtn.disabled = true;
+        clearInterval(countdown);
+        countdown = setInterval(() => {
+          timeLeft--;
+          countdownEl.textContent = timeLeft;
+          if (timeLeft <= 0) {
+            clearInterval(countdown);
+            resendBtn.disabled = false;
+          }
+        }, 1000);
+      }
+      // Validate email format
+      function isValidEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+      }
+      // Validate phone number
+      function isValidPhoneNumber(phone) {
+        return iti.isValidNumber();
+      }
+      // Registration form submission
+      registrationForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const fullName = document.getElementById('fullName').value;
+        const email = document.getElementById('email').value;
+        const phone = iti.getNumber();
+        // Reset errors
+        nameError.style.display = 'none';
+        emailError.style.display = 'none';
+        phoneError.style.display = 'none';
+        let isValid = true;
+        // Validate form
+        if (!fullName) {
+          nameError.style.display = 'block';
+          isValid = false;
+        }
+        if (!isValidEmail(email)) {
+          emailError.style.display = 'block';
+          isValid = false;
+        }
+        if (!isValidPhoneNumber(phone)) {
+          phoneError.style.display = 'block';
+          isValid = false;
+        }
+        if (isValid) {
+          // Store user data
+          userData = {
+            fullName,
+            email,
+            phone
+          };
+          // Show loading state
+          const sendCodeBtn = document.getElementById('sendCodeBtn');
+          sendCodeBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+          sendCodeBtn.disabled = true;
+          // Simulate API call to send verification code
+          setTimeout(() => {
+            // Show step 2
+            showStep(2);
+            // Show simulated SMS notification
+            showSmsNotification();
+            // Start countdown timer
+            startCountdown();
+            // Focus on first verification input
+            verificationInputs[0].focus();
+            // Reset button state
+            sendCodeBtn.innerHTML = 'Send Verification Code';
+            sendCodeBtn.disabled = false;
+          }, 2000);
+        }
+      });
+      // Verification form submission
+      verificationForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        // Get entered code
+        let enteredCode = '';
+        verificationInputs.forEach(input => {
+          enteredCode += input.value;
+        });
+        // Validate code
+        if (enteredCode === verificationCode) {
+          // Show loading state
+          const verifyBtn = document.getElementById('verifyBtn');
+          verifyBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Verifying...';
+          verifyBtn.disabled = true;
+          // Simulate API verification call
+          setTimeout(() => {
+            // Show welcome message with user's name
+            userNameSpan.textContent = userData.fullName;
+            showStep(3);
+            // Reset button state
+            verifyBtn.innerHTML = 'Verify & Create Account';
+            verifyBtn.disabled = false;
+          }, 1500);
+        } else {
+          // Show error
+          codeError.style.display = 'block';
+          // Shake animation for error
+          verificationForm.classList.add('error');
+          setTimeout(() => {
+            verificationForm.classList.remove('error');
+          }, 500);
+        }
+      });
+      // Resend code button
+      resendBtn.addEventListener('click', function() {
+        // Show loading state
+        resendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Resending...';
+        resendBtn.disabled = true;
+        // Simulate API call to resend code
+        setTimeout(() => {
+          // Generate and show new code
+          showSmsNotification();
+          // Restart countdown
+          startCountdown();
+          // Reset button
+          resendBtn.innerHTML = 'Resend Code';
+        }, 1500);
+      });
+      // Start exploring button
+      startExploringBtn.addEventListener('click', function() {
+        alert('Redirecting to homepage...');
+        // In a real application, you would redirect to the main page
+        // window.location.href = 'index.html';
+      });
+      // Close notification
+      closeNotification.addEventListener('click', function() {
+        smsNotification.classList.remove('visible');
+      });
+      // Auto-tab between verification inputs
+      verificationInputs.forEach((input, index) => {
+        input.addEventListener('input', function() {
+          if (this.value.length === 1 && index < verificationInputs.length - 1) {
+            verificationInputs[index + 1].focus();
+          }
+          // Hide error when user starts typing
+          codeError.style.display = 'none';
+        });
+        input.addEventListener('keydown', function(e) {
+          if (e.key === 'Backspace' && this.value === '' && index > 0) {
+            verificationInputs[index - 1].focus();
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>
